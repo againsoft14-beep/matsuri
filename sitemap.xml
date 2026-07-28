@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="https://www.matsuribd.com/sitemaps/xsl/sitemapindex.xsl"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd">
+  <sitemap>
+    <loc>https://www.matsuribd.com/sitemaps/product-sitemap.xml</loc>
+    <lastmod>2026-07-05T11:20:48+06:00</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://www.matsuribd.com/sitemaps/category-sitemap.xml</loc>
+    <lastmod>2026-07-05T11:20:48+06:00</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://www.matsuribd.com/sitemaps/manufacturer-sitemap.xml</loc>
+    <lastmod>2026-07-05T11:20:48+06:00</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://www.matsuribd.com/sitemaps/information-sitemap.xml</loc>
+    <lastmod>2026-07-05T11:20:48+06:00</lastmod>
+  </sitemap>
+</sitemapindex>

@@ -1,0 +1,329 @@
+{% macro alert_icon(type) %}{% spaceless %}
+		{% if type == 'error' %}
+			fa-times-circle
+		{% elseif type == 'warning' %}
+			fa-exclamation-triangle
+		{% elseif type == 'success' %}
+			fa-check-circle
+		{% elseif type == 'info' %}
+			fa-info-circle
+		{% else %}
+		{% endif %}
+{% endspaceless %}{% endmacro %}
+{{ header }}{{ column_left }}
+<div id="content">
+	<div class="page-header">
+		<div class="container-fluid">
+			<div class="pull-right">
+				<button type="button" class="btn btn-success" data-toggle="tooltip" data-container="body" data-placement="bottom" title="{{ button_apply }}" data-url="{{ save }}" id="btn-apply" data-form="#qa-form" data-context="#content" data-overlay="#page-overlay" data-vm="QAVM" data-loading-text="<i class='fa fa-spinner fa-spin'></i>"><i class="fa fa-check"></i></button>
+				<button type="button" class="btn btn-primary" data-toggle="tooltip" data-container="body" data-placement="bottom" title="{{ button_save }}" data-url="{{ save }}" id="btn-save" data-form="#qa-form" data-context="#content" data-overlay="#page-overlay" data-loading-text="<i class='fa fa-spinner fa-spin'></i>"><i class="fa fa-save"></i></button>
+				<a href="{{ cancel }}" class="btn btn-default" data-toggle="tooltip" data-container="body" data-placement="bottom" title="{{ button_cancel }}" id="btn-cancel" data-loading-text="<i class='fa fa-spinner fa-spin'></i>"><i class="fa fa-reply"></i></a>
+				{% if qa_id and delete %}<a href="{{ delete }}" class="btn btn-danger btn-nav-link" data-toggle="tooltip" data-container="body" data-placement="bottom" title="{{ button_delete }}" id="btn-delete" data-loading-text="<i class='fa fa-spinner fa-spin'></i>"><i class="fa fa-trash-o"></i></a>{% endif %}
+			</div>
+			<h1><i class="fa fa-question-circle fa-fw ext-icon"></i> {{ heading_title }}</h1>
+			<ul class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %}
+				<li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+
+	<div class="alerts">
+		<div class="container-fluid" id="alerts">
+			{% for type, _alerts in alerts %}
+				{% for alert in _alerts %}
+					{% if alert %}
+			<div class="alert alert-{% if type == "error" %}danger{% else %}{{ type }}{% endif %} fade in">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				<i class="fa {{ _self.alert_icon(type) }}"></i>{{ alert }}
+			</div>
+					{% endif %}
+				{% endfor %}
+			{% endfor %}
+		</div>
+	</div>
+
+	<div class="container-fluid bull5i-content bull5i-container">
+		<div id="page-overlay" class="bull5i-overlay fade in">
+			<div class="page-overlay-progress"><i class="fa fa-refresh fa-spin fa-5x text-muted"></i></div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_form }}</h3>
+			</div>
+			<div class="panel-body">
+
+				<form action="{{ save }}" method="post" enctype="multipart/form-data" id="qa-form" class="form-horizontal" role="form">
+					<fieldset>
+						<!-- ko if: qa_id -->
+						<div class="row">
+							<div class="col-sm-12 col-lg-6">
+								<div class="form-group">
+									<label class="col-sm-3 col-md-2 col-lg-4 control-label" for="inputID">{{ entry_id }}</label>
+									<div class="col-sm-2 col-md-1 col-lg-3">
+										<p class="form-control-static" data-bind="text: qa_id" id="inputID"></p>
+										<input type="hidden" name="qa_id" data-bind="value: qa_id">
+										<input type="hidden" name="store_id" value="{{ store_id }}">
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-12 col-lg-6">
+								<div class="form-group">
+									<label class="col-sm-3 col-md-2 col-lg-4 control-label" for="inputDateModified">{{ entry_date_modified }}</label>
+									<div class="col-sm-3 col-md-4 col-lg-8">
+										<p class="form-control-static" data-bind="text: date_modified_formatted" id="inputDateModified"></p>
+										<input type="hidden" name="date_modified" data-bind="value: date_modified">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12 col-lg-6">
+								<div class="form-group">
+									<label class="col-sm-3 col-md-2 col-lg-4 control-label" for="inputDateAsked">{{ entry_date_asked }}</label>
+									<div class="col-sm-3 col-md-4 col-lg-6">
+										<p class="form-control-static" data-bind="text: date_asked_formatted" id="inputDateAsked"></p>
+										<input type="hidden" name="date_asked" data-bind="value: date_asked">
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-12 col-lg-6">
+								<div class="form-group">
+									<label class="col-sm-3 col-md-2 col-lg-4 control-label" for="inputDateAnswered">{{ entry_date_answered }}</label>
+									<div class="col-sm-3 col-md-4 col-lg-8">
+										<p class="form-control-static" data-bind="text: date_answered_formatted" id="inputDateAnswered"></p>
+										<input type="hidden" name="date_answered" data-bind="value: date_answered">
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- /ko -->
+						<!-- ko ifnot: qa_id -->
+						<input type="hidden" name="date_asked" data-bind="value: date_asked">
+						<!-- /ko -->
+						<div class="row">
+							<div class="col-sm-12 col-lg-6 col-lg-push-6">
+								<!-- ko if: qa_id -->
+								<div class="form-group">
+									<div class="col-sm-offset-3 col-sm-3 col-md-offset-2 col-md-4 col-lg-offset-4 col-lg-8">
+										<div class="checkbox">
+											<label for="inputUpdateQuestionAnsweredDate">
+												<input type="checkbox" name="update_date_answered" value="1" id="inputUpdateQuestionAnsweredDate" data-bind="checked: update_date_answered"> {{ entry_update_date_answered }}
+											</label>
+										</div>
+									</div>
+								</div>
+								<!-- /ko -->
+							</div>
+							<div class="col-sm-12 col-lg-6 col-lg-pull-6">
+								<div class="form-group has-feedback" data-bind="css: {'has-success': product_id(), 'has-warning': !product_id() && product(), 'has-error': product.hasError}">
+									<label class="col-sm-3 col-md-2 col-lg-4 control-label required" data-bind="attr: {for: 'product'}">{{ entry_product }}</label>
+									<div class="col-sm-6 col-md-5 col-lg-4">
+										<input data-bind="attr: {name: 'product_name', id: 'product'}" class="form-control typeahead product" placeholder="{{ text_autocomplete }}" autocomplete="off">
+										<!-- ko if: !product.hasError() && product_id() -->
+										<span class="fa fa-check form-control-feedback"></span>
+										<!-- /ko -->
+										<!-- ko if: !product.hasError() && !product_id() && product() -->
+										<span class="fa fa-warning form-control-feedback"></span>
+										<!-- /ko -->
+										<!-- ko if: product.hasError() -->
+										<span class="fa fa-times form-control-feedback"></span>
+										<!-- /ko -->
+										<input type="hidden" data-bind="attr: {name: 'product_id'}, value: product_id">
+										<input type="hidden" data-bind="attr: {name: 'product'}, value: product">
+									</div>
+									<div class="col-sm-offset-3 col-md-offset-2 col-lg-offset-4 col-sm-9 col-md-10 col-lg-8 error-container" data-bind="visible: product.hasError && product.errorMsg">
+										<span class="help-block error-text" data-bind="text: product.errorMsg"></span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12 col-lg-6">
+								<div class="form-group">
+									<label class="col-sm-3 col-md-2 col-lg-4 control-label" for="selectStatus">{{ entry_status }}</label>
+									<div class="col-sm-3 col-md-2 col-lg-4">
+										<select name="status" id="selectStatus" data-bind="value: status" class="form-control">
+											<option value="1">{{ text_enabled }}</option>
+											<option value="0">{{ text_disabled }}</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<!-- ko ifnot: multistore -->
+							<div class="col-sm-12 col-lg-6">
+								<div class="form-group">
+									<div class="col-sm-offset-3 col-sm-3 col-md-offset-2 col-md-4 col-lg-offset-4 col-lg-8">
+										<div class="checkbox">
+											<label for="inputNotifyCustomer">
+												<input type="checkbox" name="notify_customer" value="1" id="inputNotifyCustomer" data-bind="checked: notify_customer"> {{ entry_notify }}
+											</label>
+											<span class="help-block">{{ help_notify }}</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- /ko -->
+						</div>
+						<!-- ko if: multistore -->
+						<div class="row">
+							<div class="col-sm-12 col-lg-6">
+								<div class="form-group">
+									<label class="col-sm-3 col-md-2 col-lg-4 control-label" for="selectStore">{{ entry_stores }}</label>
+									<div class="col-sm-4 col-lg-6">
+										<select name="question_stores[]" id="selectStore" class="form-control" data-bind="selectedOptions: question_stores" multiple>
+											{% for store_id, store in stores %}
+											<option value="{{ store_id }}">{{ store.name }}</option>
+											{% endfor %}
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-12 col-lg-6">
+								<div class="form-group">
+									<div class="col-sm-offset-3 col-sm-9 col-md-offset-2 col-md-10 col-lg-offset-4 col-lg-8">
+										<div class="checkbox">
+											<label for="inputNotifyCustomer">
+												<input type="checkbox" name="notify_customer" value="1" id="inputNotifyCustomer" data-bind="checked: notify_customer"> {{ entry_notify }}
+											</label>
+											<span class="help-block">{{ help_notify }}</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- /ko -->
+						<!-- ko ifnot: multistore -->
+						<!-- ko foreach: question_stores -->
+						<input type="hidden" name="question_stores[]" data-bind="value: $data" />
+						<!-- /ko -->
+						<!-- /ko -->
+					</fieldset>
+					<fieldset>
+						<legend>{{ text_question }}</legend>
+						<!-- ko if: language_count > 1 -->
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label class="col-sm-3 col-md-2 control-label" for="inputLanguage">{{ entry_language }}</label>
+									<div class="col-sm-3 col-md-3 fc-auto-width">
+										<select name="language_id" id="selectLanguage" data-bind="value: language_id" class="form-control">
+											{% for lang_id, language in languages %}
+											<option value="{{ lang_id }}">{{ language.name }}</option>
+											{% endfor %}
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- /ko -->
+						<!-- ko if: language_count == 1 -->
+						<input type="hidden" name="language_id" data-bind="value: language_id">
+						<!-- /ko -->
+						<div class="row">
+							<div class="col-sm-12 col-lg-6">
+								<div class="form-group">
+									<label class="col-sm-3 col-md-2 col-lg-4 control-label" for="inputQuestionAuthorName">{{ entry_author_name }}</label>
+									<div class="col-sm-3 col-md-2 col-lg-4">
+										<input type="text" name="question_author_name" class="form-control" data-bind="value: question_author_name" id="inputQuestionAuthorName">
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-12 col-lg-6">
+								<div class="form-group has-feedback" data-bind="css: {'has-success': customer_id()}">
+									<label class="col-sm-3 col-md-2 col-lg-4 control-label" for="inputCustomer">{{ entry_customer }}</label>
+									<div class="col-sm-3 col-lg-6">
+										<input data-bind="attr: {name: 'customer_name', id: 'inputCustomer'}" class="form-control typeahead customer" placeholder="{{ text_autocomplete }}" autocomplete="off">
+										<!-- ko if: customer_id() -->
+										<span class="fa fa-check form-control-feedback"></span>
+										<!-- /ko -->
+										<input type="hidden" data-bind="attr: {name: 'customer_id'}, value: customer_id">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group has-feedback" data-bind="css: {'has-error': question_author_email.hasError}">
+									<label class="col-sm-3 col-md-2 control-label" for="inputQuestionAuthorEmail">{{ entry_email }}</label>
+									<div class="col-sm-4 col-md-3">
+										<input type="text" name="question_author_email" class="form-control" data-bind="value: question_author_email" id="inputQuestionAuthorEmail">
+										<!-- ko if: question_author_email.hasError -->
+										<span class="fa fa-times form-control-feedback"></span>
+										<!-- /ko -->
+									</div>
+									<div class="col-sm-offset-3 col-md-offset-2 col-sm-9 col-md-10 error-container" data-bind="visible: question_author_email.hasError && question_author_email.errorMsg">
+										<span class="help-block error-text" data-bind="text: question_author_email.errorMsg"></span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label class="col-sm-3 col-md-2 control-label" for="inputQuestionAuthorPhone">{{ entry_phone }}</label>
+									<div class="col-sm-3 col-md-2">
+										<input type="text" name="question_author_phone" class="form-control" data-bind="value: question_author_phone" id="inputQuestionAuthorPhone">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label class="col-sm-3 col-md-2 control-label" for="inputQuestionAuthorCustom">{{ entry_custom }}</label>
+									<div class="col-sm-4 col-md-3">
+										<input type="text" name="question_author_custom" class="form-control" data-bind="value: question_author_custom" id="inputQuestionAuthorCustom">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group" data-bind="css: {'has-error': question.hasError}">
+									<label class="col-sm-3 col-md-2 control-label input-required" for="inputQuestion">{{ entry_question }}</label>
+									<div class="col-sm-9 col-md-10">
+										<textarea name="question" id="inputQuestion" data-bind="summernote: {height: 200}, value: question" class="form-control" rows="4"></textarea>
+									</div>
+									<div class="col-sm-offset-3 col-md-offset-2 col-sm-9 col-md-10 error-container" data-bind="visible: question.hasError && question.errorMsg">
+										<span class="help-block error-text" data-bind="text: question.errorMsg"></span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+					<fieldset>
+						<legend>{{ text_answer }}</legend>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label class="col-sm-3 col-md-2 control-label" for="inputAnswerAuthorName">{{ entry_author_name }}</label>
+									<div class="col-sm-3 col-md-2">
+										<input type="text" name="answer_author_name" class="form-control" data-bind="value: answer_author_name" id="inputAnswerAuthorName">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label class="col-sm-3 col-md-2 control-label" for="inputAnswer">{{ entry_answer }}</label>
+									<div class="col-sm-9 col-md-10">
+										<textarea name="answer" id="inputAnswer" data-bind="summernote: {height: 200}, value: answer"class="form-control" rows="4"></textarea>
+									</div>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+				</form>
+
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript"><!--
+!function(e,t,a){var o={{ question_stores|json_encode() }},s={{ errors|json_encode() }};e.user_token="{{ user_token }}",e.texts=t.extend({},e.texts,{error_ajax_request:"{{ error_ajax_request|addslashes() }}",error_email:"{{ error_email|addslashes() }}"});var r=function(e){var t=new RegExp("^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$");!e||t.test(e)?(this.target.hasError(!1),this.target.errorMsg("")):(this.target.hasError(!0),this.target.errorMsg(this.message))},i=function(){var t=this;this.language_count=parseInt("{{ languages|length }}"),this.qa_id=ko.observable("{{ qa_id }}"),this.product_id=ko.observable("{{ product_id }}"),this.product=ko.observable("{{ product|html_entity_decode()|addslashes() }}").extend({validate:{context:t}}),this.date_modified_formatted=ko.observable("{{ date_modified_formatted }}"),this.date_modified=ko.observable("{{ date_modified }}"),this.date_asked_formatted=ko.observable("{{ date_asked_formatted }}"),this.date_asked=ko.observable("{{ date_asked }}"),this.date_answered_formatted=ko.observable("{{ date_answered_formatted }}"),this.date_answered=ko.observable("{{ date_answered }}"),this.update_date_answered=ko.observable(parseInt("{{ update_date_answered * 1 }}")),this.status=ko.observable("{{ status }}"),this.multistore=ko.observable("{{ multistore }}"),this.question_stores=ko.observableArray(o),this.notify_customer=ko.observable(parseInt("{{ notify_customer * 1 }}")),this.language_id=ko.observable("{{ language_id }}"),this.question_author_name=ko.observable("{{ question_author_name }}"),this.customer_id=ko.observable("{{ customer_id }}"),this.customer_name=ko.observable("{{ customer_name }}"),this.question_author_email=ko.observable("{{ question_author_email }}").extend({validate:{message:e.texts.error_email,context:t,method:r,root:parent}}),this.question_author_phone=ko.observable("{{ question_author_phone }}"),this.question_author_custom=ko.observable("{{ question_author_custom }}"),this.question=ko.observable("{{ question|raw|replace_nl2br|html_entity_decode()|addslashes() }}").extend({validate:{context:t}}),this.answer_author_name=ko.observable("{{ answer_author_name }}"),this.answer=ko.observable("{{ answer|raw|replace_nl2br|html_entity_decode()|addslashes() }}")};i.prototype=new e.observable_object_methods;var n=e.view_model=new i;e.view_models=t.extend({},e.view_models,{QAVM:e.view_model}),n.applyErrors(s),ko.applyBindings(n,t("#qa-form")[0]);{% for type, attr in typeahead %}{% if type == 'product' %}var d=new Bloodhound({ {% if attr.prefetch %}prefetch:"{{ attr.prefetch }}",{% endif %}{% if attr.remote %}remote:{url:"{{ attr.remote }}",wildcard:"%QUERY"},{% endif %}datumTokenizer:Bloodhound.tokenizers.obj.whitespace("value"),queryTokenizer:Bloodhound.tokenizers.whitespace,identify:function(e){return e.id},sufficient:10});d.initialize(),t(".{{ type }}.typeahead").typeahead({autoselect:!0,hint:!0,highlight:!0},{name:"{{ type }}",limit:10,display:"value",source:d,templates:{notFound:['<div class="tt-no-suggestion">{{ text_no_records_found|addslashes() }}</div>'].join("\n"),pending:['<div class="tt-no-suggestion"><i class="fa fa-spin fa-refresh"></i> {{ text_loading|addslashes() }}</div>'].join("\n"),suggestion:Handlebars.compile(['{% verbatim %}<p><span class="tt-nowrap">{{value}}<span class="tt-secondary-right">{{model}}</span></span></p>{% endverbatim %}'].join(""))}}).on("typeahead:select typeahead:autocomplete",function(e,t){var a=ko.dataFor(this);a.product_id(t.id),a.product(t.value)}).on("typeahead:close blur",function(){var e=ko.dataFor(this),a=t(this).typeahead("val");""==a?(e.product_id(""),e.product("")):a!=e.product()&&e.product_id("")}),t(".{{ type }}.typeahead.tt-input").typeahead("val",n.product());{% elseif type == 'customer' %}var l=new Bloodhound({ {% if attr.prefetch %}prefetch:"{{ attr.prefetch }}",{% endif %}{% if attr.remote %}remote:{url:"{{ attr.remote }}",wildcard:"%QUERY"},{% endif %}datumTokenizer:Bloodhound.tokenizers.obj.whitespace("value"),queryTokenizer:Bloodhound.tokenizers.whitespace,identify:function(e){return e.id},sufficient:10});l.initialize(),t(".{{ type }}.typeahead").typeahead({hint:!0,highlight:!0},{name:"{{ type }}",limit:10,display:"value",source:l,templates:{notFound:['<div class="tt-no-suggestion">{{ text_no_records_found|addslashes() }}</div>'].join("\n"),pending:['<div class="tt-no-suggestion"><i class="fa fa-spin fa-refresh"></i> {{ text_loading|addslashes() }}</div>'].join("\n"),suggestion:Handlebars.compile(['{% verbatim %}<p><span class="tt-nowrap"><strong>{{value}}</strong><em class="tt-secondary-right">{{email}}</em></span></p>{% endverbatim %}'].join(""))}}).on("typeahead:select typeahead:autocomplete",function(e,t){var a=ko.dataFor(this);a.customer_id(t.id),a.customer_name(t.value),a.question_author_name(t.value),a.question_author_email(t.email),a.question_author_phone(t.phone)}).on("typeahead:close blur",function(){var e=ko.dataFor(this),a=t(this).typeahead("val");""==a?(e.customer_id(""),e.customer_name("")):a!=e.customer_name()&&e.customer_id("")}),t(".{{ type }}.typeahead.tt-input").typeahead("val",n.customer_name()),{% endif %}{% endfor %}e.onComplete(t("#page-overlay"),t("#content"))}(window.bull5i=window.bull5i||{},jQuery);
+//--></script>
+{{ footer }}

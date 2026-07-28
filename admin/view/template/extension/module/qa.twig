@@ -1,0 +1,460 @@
+{% macro alert_icon(type) %}{% spaceless %}
+		{% if type == 'error' %}
+			fa-times-circle
+		{% elseif type == 'warning' %}
+			fa-exclamation-triangle
+		{% elseif type == 'success' %}
+			fa-check-circle
+		{% elseif type == 'info' %}
+			fa-info-circle
+		{% else %}
+		{% endif %}
+{% endspaceless %}{% endmacro %}
+
+{{ header }}
+<div class="modal fade" id="legal_text" tabindex="-1" role="dialog" aria-labelledby="legal_text_label" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="legal_text_label">{{ text_terms }}</h4>
+			</div>
+			<div class="modal-body">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default cancel" data-dismiss="modal"><i class="fa fa-times"></i> {{ button_close }}</button>
+			</div>
+		</div>
+	</div>
+</div>
+{{ column_left }}
+<div id="content">
+	<div class="page-header">
+		<div class="container-fluid">
+			<div class="pull-right">
+				{% if update_pending %}<button type="button" data-toggle="tooltip" data-container="body" data-placement="bottom" title="{{ button_upgrade }}" class="btn btn-info" id="btn-upgrade" data-url="{{ upgrade }}" data-form="#sForm" data-context="#content" data-overlay="#page-overlay" data-loading-text="<i class='fa fa-spinner fa-spin'></i> <span class='visible-lg-inline'>{{ text_upgrading }}</span>"><i class="fa fa-arrow-circle-up"></i> <span class="visible-lg-inline">{{ button_upgrade }}</span></button>{% endif %}
+				<button type="button" data-toggle="tooltip" data-container="body" data-placement="bottom" title="{{ button_apply }}" class="btn btn-success" id="btn-apply" data-url="{{ save }}" data-form="#sForm" data-context="#content" data-vm="ExtVM" data-overlay="#page-overlay" data-loading-text="<i class='fa fa-spinner fa-spin'></i>"{% if update_pending %} disabled{% endif %}><i class="fa fa-check"></i></button>
+				<button type="submit" data-toggle="tooltip" data-container="body" data-placement="bottom" title="{{ button_save }}" class="btn btn-primary" id="btn-save" data-url="{{ save }}" data-form="#sForm" data-context="#content" data-overlay="#page-overlay" data-loading-text="<i class='fa fa-spinner fa-spin'></i>"{% if update_pending %} disabled{% endif %}><i class="fa fa-save"></i></button>
+				<a href="{{ cancel }}" data-toggle="tooltip" data-container="body" data-placement="bottom" title="{{ button_cancel }}" class="btn btn-default" id="btn-cancel" data-loading-text="<i class='fa fa-spinner fa-spin'></i>"><i class="fa fa-reply"></i></a>
+			</div>
+			<h1><i class="fa fa-question-circle fa-fw ext-icon"></i> {{ heading_title }}</h1>
+			<ul class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %}
+				<li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+
+	<div class="alerts">
+		<div class="container-fluid" id="alerts">
+			{% for type, _alerts in alerts %}
+				{% for alert in _alerts %}
+					{% if alert %}
+			<div class="alert alert-{% if type == "error" %}danger{% else %}{{ type }}{% endif %} fade in">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				<i class="fa {{ _self.alert_icon(type) }}"></i>{{ alert }}
+			</div>
+					{% endif %}
+				{% endfor %}
+			{% endfor %}
+		</div>
+	</div>
+
+	<div class="container-fluid bull5i-content bull5i-container">
+		<div id="page-overlay" class="bull5i-overlay fade in">
+			<div class="page-overlay-progress"><i class="fa fa-refresh fa-spin fa-5x text-muted"></i></div>
+		</div>
+
+		<ul class="nav nav-tabs bull5i-nav-tabs">
+			<li class="active"><a href="#settings" data-toggle="tab"><!-- ko if: general_errors() --><i class="fa fa-exclamation-circle text-danger hidden" data-bind="css:{'hidden': !general_errors()}"></i> <!-- /ko -->{{ tab_settings }}</a></li>
+			<li><a href="#qa_form" data-toggle="tab"><!-- ko if: form_errors() --><i class="fa fa-exclamation-circle text-danger hidden" data-bind="css:{'hidden': !form_errors()}"></i> <!-- /ko -->{{ tab_form }}</a></li>
+			<li><a href="#questions" data-toggle="tab"><!-- ko if: qa_errors() --><i class="fa fa-exclamation-circle text-danger hidden" data-bind="css:{'hidden': !qa_errors()}"></i> <!-- /ko -->{{ tab_qa }}</a></li>
+		</ul>
+
+		<form action="{{ save }}" method="post" enctype="multipart/form-data" id="sForm" class="form-horizontal" role="form">
+			<div class="tab-content">
+				<div class="tab-pane active" id="settings">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h3 class="panel-title"><i class="fa fa-cog fa-fw"></i> {{ tab_settings }}</h3></div>
+						<div class="panel-body">
+							<div class="row">
+								<div class="col-sm-12">
+									<fieldset>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_status">{{ entry_extension_status }}</label>
+											<div class="col-sm-2 fc-auto-width">
+												<select name="module_qa_status" id="module_qa_status" data-bind="value: status" class="form-control">
+													<option value="1">{{ text_enabled }}</option>
+													<option value="0">{{ text_disabled }}</option>
+												</select>
+												<input type="hidden" name="module_qa_installed" value="1" />
+												<input type="hidden" name="module_qa_installed_version" value="{{ installed_version }}" />
+												<input type="hidden" name="module_qa_as" data-bind="value: as" />
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_dashboard_widget">{{ entry_dashboard_widget }}</label>
+											<div class="col-sm-9 col-md-10">
+												<button class="btn {{ dashboard_widget.class }}" data-toggle="tooltip" data-container="body" data-placement="bottom" title="{{ dashboard_widget.name }}" data-url="{{ dashboard_widget.link }}" data-context="#content" data-loading-text="<i class='fa fa-spinner fa-spin'></i> {{ dashboard_widget.loading }}"><i class="fa {{ dashboard_widget.icon }}"></i> {{ dashboard_widget.name }}</button>
+											</div>
+											<div class="col-sm-offset-3 col-md-offset-2 col-sm-9 col-md-10 help-container">
+												<span class="help-block help-text">{{ help_dashboard_widget }}</span>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_new_question_notification1">{{ entry_new_question_notification }}</label>
+											<div class="col-sm-9 col-md-10">
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_new_question_notification" id="module_qa_new_question_notification1" value="1" data-bind="checked: new_question_notification"> {{ text_yes }}
+												</label>
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_new_question_notification" id="module_qa_new_question_notification0" value="0" data-bind="checked: new_question_notification"> {{ text_no }}
+												</label>
+											</div>
+											<div class="col-sm-offset-3 col-md-offset-2 col-sm-9 col-md-10 help-container">
+												<span class="help-block help-text">{{ help_new_question_notification }}</span>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" data-bind="attr: {for: 'notification_emails{{ default_language }}'}, css: {'has-error': notification_emails.hasError}">{{ entry_notification_emails }}</label>
+											<div class="col-sm-6 col-md-5 col-lg-4">
+											<!-- ko foreach: notification_emails -->
+												<div data-bind="css: {'multi-row': $index() != 0, 'has-error': email.hasError}">
+													<div class="input-group">
+														<span class="input-group-addon" data-bind="attr: {title: $root.languages[language_id()].name}"><img data-bind="attr: {src: $root.languages[language_id()].flag, title: $root.languages[language_id()].name}" /></span>
+														<input data-bind="attr: {name: 'module_qa_notification_emails[' + language_id() + ']', id: 'notification_emails' + language_id()}, value: email" class="form-control">
+													</div>
+												</div>
+												<div class="has-error" data-bind="visible: email.hasError && email.errorMsg">
+													<span class="help-block" data-bind="text: email.errorMsg"></span>
+												</div>
+											<!-- /ko -->
+											</div>
+											<div class="col-sm-offset-3 col-md-offset-2 col-sm-9 col-md-10 help-container">
+												<span class="help-block help-text">{{ help_notification_emails }}</span>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_notification_from">{{ entry_notification_email_from }}</label>
+											<div class="col-sm-2 fc-auto-width">
+												<select name="module_qa_notification_from" id="module_qa_notification_from" data-bind="value: notification_from" class="form-control">
+													<option value="0">{{ text_store_email_address }}</option>
+													<option value="1">{{ text_customer_email_address }}</option>
+												</select>
+											</div>
+											<div class="col-sm-offset-3 col-md-offset-2 col-sm-9 col-md-10 help-container">
+												<span class="help-block help-text">{{ help_notification_email_from }}</span>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_question_reply_notification1">{{ entry_question_reply_notification }}</label>
+											<div class="col-sm-9 col-md-10">
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_question_reply_notification" id="module_qa_question_reply_notification1" value="1" data-bind="checked: question_reply_notification"> {{ text_yes }}
+												</label>
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_question_reply_notification" id="module_qa_question_reply_notification0" value="0" data-bind="checked: question_reply_notification"> {{ text_no }}
+												</label>
+											</div>
+											<div class="col-sm-offset-3 col-md-offset-2 col-sm-9 col-md-10 help-container">
+												<span class="help-block help-text">{{ help_question_reply_notification }}</span>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_remove_sql_changes0">{{ entry_remove_sql_changes }}</label>
+											<div class="col-sm-9 col-md-10">
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_remove_sql_changes" id="module_qa_remove_sql_changes1" value="1" data-bind="checked: remove_sql_changes"> {{ text_yes }}
+												</label>
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_remove_sql_changes" id="module_qa_remove_sql_changes0" value="0" data-bind="checked: remove_sql_changes"> {{ text_no }}
+												</label>
+											</div>
+											<div class="col-sm-offset-3 col-md-offset-2 col-sm-9 col-md-10 help-container">
+												<span class="help-block help-text">{{ help_remove_sql_changes }}</span>
+											</div>
+										</div>
+										<!-- ko if: _sas() == 1 -->
+										<div class="form-group">
+											<div class="col-sm-offset-3 col-md-offset-2 col-sm-6 col-md-5 col-lg-4">
+												<select class="form-control" data-bind="selectedOptions: _as" multiple>
+													{% for store_id, store in stores %}
+													<option value="{{ store_id }}">{{ store.name }}</option>
+													{% endfor %}
+												</select>
+											</div>
+										</div>
+										<!-- /ko -->
+									</fieldset>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="tab-pane" id="qa_form">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h3 class="panel-title"><i class="fa fa-cog fa-fw"></i> {{ tab_form }}</h3></div>
+						<div class="panel-body">
+							<div class="row">
+								<div class="col-sm-12">
+									<fieldset>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_form_display_name1">{{ entry_form_display_name }}</label>
+											<div class="col-sm-9 col-md-10">
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_form_display_name" id="module_qa_form_display_name1" value="1" data-bind="checked: form_display_name"> {{ text_yes }}
+												</label>
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_form_display_name" id="module_qa_form_display_name0" value="0" data-bind="checked: form_display_name"> {{ text_no }}
+												</label>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_form_require_name1">{{ entry_form_require_name }}</label>
+											<div class="col-sm-9 col-md-10">
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_form_require_name" id="module_qa_form_require_name1" value="1" data-bind="checked: form_require_name"> {{ text_yes }}
+												</label>
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_form_require_name" id="module_qa_form_require_name0" value="0" data-bind="checked: form_require_name"> {{ text_no }}
+												</label>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_form_display_email1">{{ entry_form_display_email }}</label>
+											<div class="col-sm-9 col-md-10">
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_form_display_email" id="module_qa_form_display_email1" value="1" data-bind="checked: form_display_email"> {{ text_yes }}
+												</label>
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_form_display_email" id="module_qa_form_display_email0" value="0" data-bind="checked: form_display_email"> {{ text_no }}
+												</label>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_form_require_email1">{{ entry_form_require_email }}</label>
+											<div class="col-sm-9 col-md-10">
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_form_require_email" id="module_qa_form_require_email1" value="1" data-bind="checked: form_require_email"> {{ text_yes }}
+												</label>
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_form_require_email" id="module_qa_form_require_email0" value="0" data-bind="checked: form_require_email"> {{ text_no }}
+												</label>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_form_display_phone1">{{ entry_form_display_phone }}</label>
+											<div class="col-sm-9 col-md-10">
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_form_display_phone" id="module_qa_form_display_phone1" value="1" data-bind="checked: form_display_phone"> {{ text_yes }}
+												</label>
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_form_display_phone" id="module_qa_form_display_phone0" value="0" data-bind="checked: form_display_phone"> {{ text_no }}
+												</label>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_form_require_phone1">{{ entry_form_require_phone }}</label>
+											<div class="col-sm-9 col-md-10">
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_form_require_phone" id="module_qa_form_require_phone1" value="1" data-bind="checked: form_require_phone"> {{ text_yes }}
+												</label>
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_form_require_phone" id="module_qa_form_require_phone0" value="0" data-bind="checked: form_require_phone"> {{ text_no }}
+												</label>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_form_display_phone1">{{ entry_form_display_custom }}</label>
+											<div class="col-sm-9 col-md-10">
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_form_display_custom_field" id="module_qa_form_display_custom_field1" value="1" data-bind="checked: form_display_custom_field"> {{ text_yes }}
+												</label>
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_form_display_custom_field" id="module_qa_form_display_custom_field0" value="0" data-bind="checked: form_display_custom_field"> {{ text_no }}
+												</label>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_form_require_custom_field1">{{ entry_form_require_custom }}</label>
+											<div class="col-sm-9 col-md-10">
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_form_require_custom_field" id="module_qa_form_require_custom_field1" value="1" data-bind="checked: form_require_custom_field"> {{ text_yes }}
+												</label>
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_form_require_custom_field" id="module_qa_form_require_custom_field0" value="0" data-bind="checked: form_require_custom_field"> {{ text_no }}
+												</label>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" data-bind="attr: {for: 'custom_field_names{{ default_language }}'}, css: {'has-error': form_custom_field_name.hasError}">{{ entry_form_custom_field_name }}</label>
+											<div class="col-sm-6 col-md-5 col-lg-4">
+											<!-- ko foreach: form_custom_field_name -->
+												<div data-bind="css: {'multi-row': $index() != 0, 'has-error': name.hasError}">
+													<div class="input-group">
+														<span class="input-group-addon" data-bind="attr: {title: $root.languages[language_id()].name}"><img data-bind="attr: {src: $root.languages[language_id()].flag, title: $root.languages[language_id()].name}" /></span>
+														<input data-bind="attr: {name: 'module_qa_form_custom_field_name[' + language_id() + ']', id: 'custom_field_names' + language_id()}, value: name" class="form-control">
+													</div>
+												</div>
+												<div class="has-error" data-bind="visible: name.hasError && name.errorMsg">
+													<span class="help-block" data-bind="text: name.errorMsg"></span>
+												</div>
+											<!-- /ko -->
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_form_display_captcha1">{{ entry_form_display_captcha }}</label>
+											<div class="col-sm-9 col-md-10">
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_form_display_captcha" id="module_qa_form_display_captcha1" value="1" data-bind="checked: form_display_captcha"> {{ text_yes }}
+												</label>
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_form_display_captcha" id="module_qa_form_display_captcha0" value="0" data-bind="checked: form_display_captcha"> {{ text_no }}
+												</label>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_form_require_captcha1">{{ entry_form_require_captcha }}</label>
+											<div class="col-sm-9 col-md-10">
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_form_require_captcha" id="module_qa_form_require_captcha1" value="1" data-bind="checked: form_require_captcha"> {{ text_yes }}
+												</label>
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_form_require_captcha" id="module_qa_form_require_captcha0" value="0" data-bind="checked: form_require_captcha"> {{ text_no }}
+												</label>
+											</div>
+										</div>
+									</fieldset>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="tab-pane" id="questions">
+					<div class="panel panel-default">
+						<div class="panel-heading"><h3 class="panel-title"><i class="fa fa-cog fa-fw"></i> {{ tab_qa }}</h3></div>
+						<div class="panel-body">
+							<div class="row">
+								<div class="col-sm-12">
+									<fieldset>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_display_questions1">{{ entry_display_questions }}</label>
+											<div class="col-sm-9 col-md-10">
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_display_questions" id="module_qa_display_questions1" value="1" data-bind="checked: display_questions"> {{ text_yes }}
+												</label>
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_display_questions" id="module_qa_display_questions0" value="0" data-bind="checked: display_questions"> {{ text_no }}
+												</label>
+											</div>
+											<div class="col-sm-offset-3 col-md-offset-2 col-sm-9 col-md-10 help-container">
+												<span class="help-block help-text">{{ help_display_questions }}</span>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_display_all_languages1">{{ entry_display_all_languages }}</label>
+											<div class="col-sm-9 col-md-10">
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_display_all_languages" id="module_qa_display_all_languages1" value="1" data-bind="checked: display_all_languages"> {{ text_yes }}
+												</label>
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_display_all_languages" id="module_qa_display_all_languages0" value="0" data-bind="checked: display_all_languages"> {{ text_no }}
+												</label>
+											</div>
+											<div class="col-sm-offset-3 col-md-offset-2 col-sm-9 col-md-10 help-container">
+												<span class="help-block help-text">{{ help_display_all_languages }}</span>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_new_question_status">{{ entry_new_questions_status }}</label>
+											<div class="col-sm-2 fc-auto-width">
+												<select name="module_qa_new_question_status" id="module_qa_new_question_status" data-bind="value: new_question_status" class="form-control">
+													<option value="1">{{ text_enabled }}</option>
+													<option value="0">{{ text_disabled }}</option>
+												</select>
+											</div>
+										</div>
+										<div class="form-group" data-bind="css: {'has-error': items_per_page.hasError}">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_items_per_page">{{ entry_items_per_page }}</label>
+											<div class="col-sm-2 col-md-2 col-lg-1">
+												<input type="text" name="module_qa_items_per_page" id="module_qa_items_per_page"  data-bind="value: items_per_page" class="form-control" />
+											</div>
+											<div class="col-sm-offset-3 col-md-offset-2 col-sm-9 col-md-10 error-container" data-bind="visible: items_per_page.hasError && items_per_page.errorMsg">
+												<span class="help-block error-text" data-bind="text: items_per_page.errorMsg"></span>
+											</div>
+											<div class="col-sm-offset-3 col-md-offset-2 col-sm-9 col-md-10 help-container">
+												<span class="help-block help-text">{{ help_items_per_page }}</span>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_preload">{{ entry_preload }}</label>
+											<div class="col-sm-2 fc-auto-width">
+												<select name="module_qa_preload" id="module_qa_preload" data-bind="value: preload" class="form-control">
+													<option value="0">{{ text_none }}</option>
+													<option value="1">{{ text_first_page }}</option>
+													<option value="2">{{ text_all }}</option>
+												</select>
+											</div>
+											<div class="col-sm-offset-3 col-md-offset-2 col-sm-9 col-md-10 help-container">
+												<span class="help-block help-text">{{ help_preload }}</span>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_display_question_author1">{{ entry_display_question_author }}</label>
+											<div class="col-sm-9 col-md-10">
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_display_question_author" id="module_qa_display_question_author1" value="1" data-bind="checked: display_question_author"> {{ text_yes }}
+												</label>
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_display_question_author" id="module_qa_display_question_author0" value="0" data-bind="checked: display_question_author"> {{ text_no }}
+												</label>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_display_question_date1">{{ entry_display_question_date }}</label>
+											<div class="col-sm-9 col-md-10">
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_display_question_date" id="module_qa_display_question_date1" value="1" data-bind="checked: display_question_date"> {{ text_yes }}
+												</label>
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_display_question_date" id="module_qa_display_question_date0" value="0" data-bind="checked: display_question_date"> {{ text_no }}
+												</label>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_display_answer_author1">{{ entry_display_answer_author }}</label>
+											<div class="col-sm-9 col-md-10">
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_display_answer_author" id="module_qa_display_answer_author1" value="1" data-bind="checked: display_answer_author"> {{ text_yes }}
+												</label>
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_display_answer_author" id="module_qa_display_answer_author0" value="0" data-bind="checked: display_answer_author"> {{ text_no }}
+												</label>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-sm-3 col-md-2 control-label" for="module_qa_display_answer_date1">{{ entry_display_answer_date }}</label>
+											<div class="col-sm-9 col-md-10">
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_display_answer_date" id="module_qa_display_answer_date1" value="1" data-bind="checked: display_answer_date"> {{ text_yes }}
+												</label>
+												<label class="radio-inline">
+													<input type="radio" name="module_qa_display_answer_date" id="module_qa_display_answer_date0" value="0" data-bind="checked: display_answer_date"> {{ text_no }}
+												</label>
+											</div>
+										</div>
+									</fieldset>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<script type="text/javascript"><!--
+!function(e,o,a){var r,t={{ errors|json_encode() }},s={{ languages|json_encode() }},i={{ module_qa_notification_emails|json_encode() }},n={{ module_qa_form_custom_field_name|json_encode()|html_entity_decode() }},_={{ stores|json_encode()|html_entity_decode() }};e.user_token="{{ user_token }}",e.texts=o.extend({},e.texts,{error_ajax_request:"{{ error_ajax_request|addslashes() }}",error_email:"{{ error_email|addslashes() }}",error_custom_field_name:"{{ error_custom_field_name|addslashes() }}",error_positive_integer:"{{ error_positive_integer|addslashes() }}"}),e.load_service_list=function(e){var e=e!==a?1*e:0,t=o.Deferred();return r.service_list_loaded()&&!e||r.service_list_loading()?t.reject():(r.service_list_loading(!0),o.when(o.ajax({url:"{{ services }}",data:{force:e},dataType:"json"})).then(function(e){r.service_list_loaded(!0),r.service_list_loading(!1),r.clearServices(),e.services&&o.each(e.services,function(e,o){var a=o.code,t=o.name,s=o.description||"",i=o.currency,n=o.price,_=o.turnaround;r.addService(a,t,s,i,n,_)}),e.rate&&o("#hourly_rate").html(e.rate),t.resolve()},function(e,o,a){r.service_list_loaded(!0),r.service_list_loading(!1),t.reject(),window.console&&window.console.log&&window.console.log("Failed to load services list: "+a)})),t.promise()};var h=function(e){isNaN(parseInt(e))||parseInt(e)<0?(this.target.hasError(!0),this.target.errorMsg(this.message)):(this.target.hasError(!1),this.target.errorMsg(""))},c=function(e){var o=new RegExp("^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$");!parseInt(this.root.new_question_notification())||o.test(e)?(this.target.hasError(!1),this.target.errorMsg("")):(this.target.hasError(!0),this.target.errorMsg(this.message))},l=function(e){!parseInt(this.root.form_display_custom_field())||e?(this.target.hasError(!1),this.target.errorMsg("")):(this.target.hasError(!0),this.target.errorMsg(this.message))},p=function(e,o,a,r,t,s){this.code=e,this.name=o,this.description=a,this.currency=r,this.price=t,this.turnaround=s},d=function(e,o,a){this.id=e,this.name=o,this.flag=a},u=function(o,a,r){var t=this;this.language_id=ko.observable(o),this.email=ko.observable(a).extend({validate:{message:e.texts.error_email,context:t,method:c,root:r}}),this.validate=function(){for(var e in t)ko.isObservable(t[e])&&"function"==typeof t[e].validate&&t[e].validate(t[e]())}};u.prototype=new e.observable_object_methods;var m=function(o,a,r){var t=this;this.language_id=ko.observable(o),this.name=ko.observable(a).extend({validate:{message:e.texts.error_custom_field_name,context:t,method:l,root:r}}),this.validate=function(){for(var e in t)ko.isObservable(t[e])&&"function"==typeof t[e].validate&&t[e].validate(t[e]())}};m.prototype=new e.observable_object_methods;var f=function(){var a=this,r={},t={};this.languages={},o.each(s,function(e,o){a.languages[e]=new d(o.language_id,o.name,(o.hasOwnProperty("image")&&o.image)?"view/image/flags/"+o.image:"language/"+o.code+"/"+o.code+".png")}),this.default_language="{{ default_language }}",o.each(a.languages,function(e,o){r[o.id]=i.hasOwnProperty(o.id)?{email:i[o.id]}:{email:""},t[o.id]=n.hasOwnProperty(o.id)?{name:n[o.id]}:{name:""}}),this.status=ko.observable("{{ module_qa_status }}"),this.new_question_notification=ko.observable("{{ module_qa_new_question_notification }}"),this.notification_emails=ko.observableArray(o.map(r,function(e,o){return new u(o,e.hasOwnProperty("email")?e.email:"",a)})).withIndex("language_id").extend({hasError:{check:!0,context:a},applyErrors:{context:a},checkErrors:{context:a}}),this.notification_from=ko.observable("{{ module_qa_notification_from }}"),this.question_reply_notification=ko.observable("{{ module_qa_question_reply_notification }}"),this.remove_sql_changes=ko.observable("{{ module_qa_remove_sql_changes }}"),this._sas=ko.observable(0),this._as=ko.observableArray(JSON.parse(atob("{{ module_qa_as }}"))),this.as=ko.computed(function(){return btoa(JSON.stringify(a._as()))}),this.asn=ko.computed(function(){var e=[];return ko.utils.arrayForEach(a._as(),function(o){_.hasOwnProperty(o)&&e.push(_[o].name)}),e.join(", ")}),this.iasn=ko.computed(function(){var e=[];return o.map(_,function(o,r){-1==a._as().indexOf(r.toString())&&e.push(o.name)}),e.join(", ")}),this.general_errors=ko.computed(function(){return a.notification_emails.hasError()}),this.new_question_notification.subscribe(function(){a.notification_emails.checkErrors()}),this.form_display_name=ko.observable("{{ module_qa_form_display_name }}"),this.form_require_name=ko.observable("{{ module_qa_form_require_name }}"),this.form_display_email=ko.observable("{{ module_qa_form_display_email }}"),this.form_require_email=ko.observable("{{ module_qa_form_require_email }}"),this.form_display_phone=ko.observable("{{ module_qa_form_display_phone }}"),this.form_require_phone=ko.observable("{{ module_qa_form_require_phone }}"),this.form_display_custom_field=ko.observable("{{ module_qa_form_display_custom_field }}"),this.form_require_custom_field=ko.observable("{{ module_qa_form_require_custom_field }}"),this.form_custom_field_name=ko.observableArray(o.map(t,function(e,o){return new m(o,e.hasOwnProperty("name")?e.name:"",a)})).withIndex("language_id").extend({hasError:{check:!0,context:a},applyErrors:{context:a},checkErrors:{context:a}}),this.form_display_captcha=ko.observable("{{ module_qa_form_display_captcha }}"),this.form_require_captcha=ko.observable("{{ module_qa_form_require_captcha }}"),this.form_errors=ko.computed(function(){return a.form_custom_field_name.hasError()}),this.form_display_custom_field.subscribe(function(){a.form_custom_field_name.checkErrors()}),this.display_questions=ko.observable("{{ module_qa_display_questions }}"),this.display_all_languages=ko.observable("{{ module_qa_display_all_languages }}"),this.new_question_status=ko.observable("{{ module_qa_new_question_status }}"),this.items_per_page=ko.observable("{{ module_qa_items_per_page * 1 }}").extend({numeric:{precision:0,context:a},validate:{message:e.texts.error_positive_integer,context:a,method:h}}),this.preload=ko.observable("{{ module_qa_preload }}"),this.display_question_author=ko.observable("{{ module_qa_display_question_author }}"),this.display_question_date=ko.observable("{{ module_qa_display_question_date }}"),this.display_answer_author=ko.observable("{{ module_qa_display_answer_author }}"),this.display_answer_date=ko.observable("{{ module_qa_display_answer_date }}"),this.qa_errors=ko.computed(function(){return a.items_per_page.hasError()}),a.service_list_loaded=ko.observable(!1),a.service_list_loading=ko.observable(!1),a.services=ko.observableArray([]),a.addService=function(e,o,r,t,s,i){a.services.push(new p(e,o,r,t,s,i))},a.clearServices=function(){a.services.removeAll()},this.checkErrors=function(){for(var e in a)ko.isObservable(a[e])&&"function"==typeof a[e].checkErrors&&a[e].checkErrors()}};f.prototype=new e.observable_object_methods,o(function(){var a=window.location.hash,s=a.split("?")[0];r=e.view_model=new f,e.view_models=o.extend({},e.view_models,{ExtVM:e.view_model}),r.checkErrors(),r.applyErrors(t),ko.applyBindings(r,o("#content")[0]),o("#legal_text .modal-body").load("view/template/extension/module/static/bull5i_qa_extension_terms.htm?v={{ installed_version }}"),o("body").on("shown.bs.tab","a[data-toggle='tab'][href='#ext-support'],a[data-toggle='tab'][href='#services']",function(){e.load_service_list()}).on("keydown","#module_qa_status",function(e){if(e.altKey&&e.shiftKey&&e.ctrlKey&&83==e.keyCode){var o=ko.dataFor(this);o._sas(0==o._sas()?1:0)}}),e.onComplete(o("#page-overlay"),o("#content")).done(function(){e.activateTab(s)})})}(window.bull5i=window.bull5i||{},jQuery);
+//--></script>
+{{ footer }}

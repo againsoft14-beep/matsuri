@@ -1,0 +1,20 @@
+<style>
+  .module-features-description ul{
+padding-inline-start: 20px !important;
+}
+.module-features-description ul ul{
+display: contents;
+}
+.module-features-description ul ul li {
+    list-style-type: disc;
+  }
+</style>
+{% if product_attributes %}
+<div class="module-features-description">
+      <ul>
+        {% for short_attribute in product_attributes %}
+          <li>{{ short_attribute }}</li>
+        {% endfor %}
+      </ul>
+</div>
+{% endif %}

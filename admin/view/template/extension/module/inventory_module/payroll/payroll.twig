@@ -1,0 +1,210 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+      
+    <div class="container-fluid">
+      <div class="pull-right">
+          <a href="{{ employee_list }}" data-toggle="tooltip" title="{{ text_employee_list }}" class="btn btn-default"><i class="fa fa-users"></i> {{ text_employee_list }}</a>
+          <a href="{{ export }}" data-toggle="tooltip" title="Export" class="btn btn-success"><i class="fa fa-file-excel-o"></i> Export</a>
+        </div>
+      <h1>{{ heading_title }}</h1>
+      {{ breadcrumb }}
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    {{ messages }}
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-refresh"></i> Generate Monthly Payroll</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ generate }}" method="post" id="form-generate">
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="form-group">
+                <label class="control-label" for="input-month">{{ entry_month }}</label>
+                <select name="month" id="input-month" class="form-control">
+                  {% set months = {
+                    '01': 'January', '02': 'February', '03': 'March', '04': 'April', 
+                    '05': 'May', '06': 'June', '07': 'July', '08': 'August', 
+                    '09': 'September', '10': 'October', '11': 'November', '12': 'December'
+                  } %}
+                  {% for val, name in months %}
+                    <option value="{{ val }}" {{ val == "now"|date("m") ? 'selected' : '' }}>{{ name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="form-group">
+                <label class="control-label" for="input-year">{{ entry_year }}</label>
+                <select name="year" id="input-year" class="form-control">
+                  {% for y in 2024..2030 %}
+                  <option value="{{ y }}" {{ y == "now"|date("Y") ? 'selected' : '' }}>{{ y }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="form-group" style="margin-top: 23px;">
+                <button type="button" class="btn btn-success btn-block" onclick="toggolePayroll()">Prepare for Generate Payroll</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="payroll-preparation" style="display:none; margin-top: 20px; border-top: 1px solid #e5e5e5; padding-top: 20px;">
+            <h4><i class="fa fa-users"></i> Review Employees for this Month</h4>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr style="background: #f9f9f9;">
+                            <td width="1" class="text-center">
+                                <input type="checkbox" onclick="$('.emp-checkbox').prop('checked', this.checked); calculateGrandTotal();" checked />
+                            </td>
+                            <td class="text-left">{{ column_name }}</td>
+                            <td class="text-left">{{ column_basic }}</td>
+                            <td class="text-left">Bonus</td>
+                            <td class="text-left">Deduction</td>
+                            <td class="text-right">{{ column_net_salary }}</td>
+                            <td class="text-right">{{ column_action }}</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for emp in active_employees %}
+                        <tr class="employee-row"> 
+                            <td class="text-center">
+                                <input type="checkbox" name="payroll_data[{{ emp.emp_id }}][include]" value="1" checked class="emp-checkbox" onchange="calculateGrandTotal();" />
+                                <input type="hidden" name="payroll_data[{{ emp.emp_id }}][emp_id]" value="{{ emp.emp_id }}" />
+                            </td>
+                            <td class="text-left">{{ emp.name }}</td>
+                            <td class="text-left">
+                                <input type="text" name="payroll_data[{{ emp.emp_id }}][basic]" value="{{ emp.salary }}" class="form-control input-sm val-basic" readonly /> 
+                            </td>
+                            <td class="text-left">
+                                <input type="number" name="payroll_data[{{ emp.emp_id }}][bonus]" value="0.00" step="0.01" class="form-control input-sm val-bonus" onkeyup="calculateRow(this);" />
+                            </td>
+                            <td class="text-left">
+                                <input type="number" name="payroll_data[{{ emp.emp_id }}][deduction]" value="0.00" step="0.01" class="form-control input-sm val-deduction" onkeyup="calculateRow(this);" />
+                            </td>
+                            <td class="text-right">
+                                <strong class="val-net">{{ emp.salary }}</strong>
+                            </td>
+                            <td class="text-right">
+                                <button type="button" class="btn btn-danger btn-sm" onclick="$(this).closest('tr').remove(); calculateGrandTotal();"><i class="fa fa-minus-circle"></i></button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr style="background: #eee; font-weight: bold;">
+                            <td colspan="5" class="text-right">Total Payroll Amount:</td>
+                            <td class="text-right"><span id="grand-total">0.00</span></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary" onclick="return confirm('Generate payroll for selected employees?')">
+                    <i class="fa fa-check-circle"></i> Confirm & Generate Payroll
+                </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_list }}</h3>
+      </div>
+      <div class="panel-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                  <td class="text-left">
+                    <a href="{{ sort_month_year }}" class="{{ sort == 'month_year' ? order|lower : '' }}">{{ column_month_year }}</a>
+                  </td>
+                  
+                  <td class="text-right">
+                    <a href="{{ sort_net_salary }}" class="{{ sort == 'total_net_salary' ? order|lower : '' }}">{{ column_net_salary }}</a>
+                  </td>
+                  
+                  <td class="text-center">
+                    <a href="{{ sort_status }}" class="{{ sort == 'status' ? order|lower : '' }}">{{ column_status }}</a>
+                  </td>
+                  
+                  <td class="text-right">{{ column_action }}</td>
+                </tr>
+              </thead>
+            <tbody>
+              {% if payrolls %}
+              {% for p in payrolls %}
+              <tr>
+                <td class="text-left"><strong>{{ p.month_year }}</strong></td>
+                <td class="text-right">{{ p.net_salary }}</td>
+                <td class="text-center">
+                    {% if p.status == 1 %}
+                        <span class="label label-success">Paid</span>
+                    {% else %}
+                        <span class="label label-warning">Pending</span>
+                    {% endif %}
+                </td>
+                <td class="text-right">
+                  <a href="{{ p.view }}" data-toggle="tooltip" title="View Details" class="btn btn-info"><i class="fa fa-eye"></i> View Details</a>
+                </td>
+              </tr>
+              {% endfor %}
+              {% else %}
+              <tr>
+                <td class="text-center" colspan="4">{{ text_no_results }}</td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+function toggolePayroll() {
+    $('#payroll-preparation').slideToggle('slow', function() {
+        if ($(this).is(':visible')) {
+            calculateGrandTotal();
+        }
+    });
+}
+
+function calculateRow(element) {
+    var row = $(element).closest('.employee-row');
+    var basic = parseFloat(row.find('.val-basic').val()) || 0;
+    var bonus = parseFloat(row.find('.val-bonus').val()) || 0;
+    var deduction = parseFloat(row.find('.val-deduction').val()) || 0;
+    
+    var net = (basic + bonus) - deduction;
+    row.find('.val-net').text(net.toFixed(2));
+    
+    calculateGrandTotal();
+}
+
+function calculateGrandTotal() {
+    var total = 0;
+    $('.employee-row').each(function() {
+        if ($(this).find('.emp-checkbox').is(':checked')) {
+            var rowNet = parseFloat($(this).find('.val-net').text()) || 0;
+            total += rowNet;
+        }
+    });
+    $('#grand-total').text(total.toFixed(2));
+}
+
+$(document).on('change', '.emp-checkbox', function() {
+    calculateGrandTotal();
+});
+</script>
+{{ footer }}

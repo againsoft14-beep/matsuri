@@ -1,0 +1,206 @@
+{{ header }}
+<ul class="breadcrumb">
+  {% for breadcrumb in breadcrumbs %}
+  <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+  {% endfor %}
+</ul>
+
+{% if j3.settings.get('pageTitlePosition') == 'top' %}
+  <h1 class="title page-title"><span>{{ heading_title }}</span></h1>
+{% endif %}
+
+{{ j3.loadController('journal3/layout', 'top') }}
+
+<div id="common-success" class="container">
+  <div class="row">{{ column_left }}
+    {% if column_left and column_right %}
+    {% set class = 'col-sm-6' %}
+    {% elseif column_left or column_right %}
+    {% set class = 'col-sm-9' %}
+    {% else %}
+    {% set class = 'col-sm-12' %}
+    {% endif %}
+
+    <div id="content" class="{{ class }}">
+        
+      <div id="printableInvoice" style="background: #fff; padding: 20px;">
+        <!-- Logo Section -->
+        <div style="text-align: center; margin-bottom: 20px;">
+          <img src="image/cache/catalog/website/logo/matsuri-1000x548.png" alt="Website Logo" style="width: 150px;">
+        </div>
+           
+        {% if j3.settings.get('pageTitlePosition') == 'default' %}
+          <h1 class="title page-title">{{ heading_title }}</h1>
+        {% endif %}
+        
+        {{ content_top }}
+      
+        {% if products %}
+          <!-- Order Info Table -->
+          <table class="table table-bordered">
+            <thead>
+              <tr style="background-color: #f5f5f5;">
+                <td class="text-left" colspan="2"><b>Order Details</b></td>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="text-left" style="width: 50%;">
+                  <b>Order ID:</b> #{{ order_id }}<br />
+                  <b>Order Date:</b> {{ date_added }}
+                </td>
+                <td class="text-left" style="width: 50%;">
+                  {% if payment_method %} <b>Payment Method:</b> {{ payment_method }}<br />{% endif %}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Address Table -->
+          {#{% if shipping_address %}#}
+          {#<table class="table table-bordered">#}
+          {#  <thead>#}
+          {#    <tr style="background-color: #f5f5f5;">#}
+          {#      <td class="text-left"><b>Shipping Address</b></td>#}
+          {#    </tr>#}
+          {#  </thead>#}
+          {#  <tbody>#}
+          {#      <tr>#}
+          {#          <td class="text-left" style="font-size:18px; font-weight:600;">#}
+          {#              {{ shipping_address }}#}
+          {#              {% if comment %}#}
+          {#                  <br/>#}
+          {#                  <br/>#}
+          {#                  Order Note: {{ comment }}#}
+          {#              {% endif %}#}
+          {#          </td>#}
+          {#      </tr>#}
+          {#  </tbody>#}
+          {#</table>#}
+          {#{% endif %}#}
+          
+          
+
+          <!-- Product Table -->
+          <div class="table-responsive">
+            <table class="table table-bordered table-order">
+              <thead>
+                <tr style="background-color: #f5f5f5;">
+                  <td class="text-left"><b>Product Name</b></td>
+                  <td class="text-right"><b>Quantity</b></td>
+                  <td class="text-right"><b>Unit Price</b></td>
+                  <td class="text-right"><b>Total</b></td>
+                </tr>
+              </thead>
+              <tbody>
+                {% for product in products %}
+                <tr>
+                  <td class="text-left">{{ product.name }}
+                    {% for option in product.option %} <br />
+                    &nbsp;<small> - {{ option.name }}: {{ option.value }}</small> {% endfor %}
+                  </td>
+                  <td class="text-right">{{ product.quantity }}</td>
+                  <td class="text-right">{{ product.price }}</td>
+                  <td class="text-right">{{ product.total }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+              <tfoot>
+                {% for total in totals %}
+                <tr>
+                  <td colspan="3" class="text-right"><b>{{ total.title }}</b></td>
+                  <td class="text-right">{{ total.text }}</td>
+                </tr>
+                {% endfor %}
+              </tfoot>
+            </table>
+          </div>
+
+          
+      </div> <!-- End of #printableInvoice -->
+      
+        <!-- Action Buttons -->
+        <div class="buttons" style="margin-top: 20px; display: flex; flex-direction: column; align-items: flex-end;">
+            
+            {% if order_id %}
+            <div style="margin-bottom: 10px;">
+                <!-- Save to Gallery Button -->
+                <button id="order-screenshot" class="btn btn-secondary" style="margin-left: 10px; position: relative;">
+                    Save to Gallery
+                    <style>#order-screenshot::after, #order-screenshot::before { display: none !important; }</style>
+                </button>
+        
+                <!-- Print Button -->
+                <button onclick="printInvoice()" class="btn btn-primary" style="margin-left: 10px; position: relative;">
+                    Print
+                    <style>button[onclick="printInvoice()"]::after, button[onclick="printInvoice()"]::before { display: none !important; }</style>
+                </button>
+            </div>
+            {% endif %}
+        
+            <div class="pull-right">
+                <a href="{{ continue }}" class="btn btn-primary" style="position: relative;">
+                    {{ button_continue }}
+                    <style>.pull-right .btn::after { display: none !important; }</style>
+                </a>
+            </div>
+        </div>
+
+      {{ content_bottom }}
+    </div>
+    {{ column_right }}
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+    function getRandomString(length) {
+        var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        var result = '';
+        for (var i = 0; i < length; i++) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return result;
+    }
+
+    function printInvoice() {
+        var printContents = document.getElementById('printableInvoice').innerHTML;
+        var originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        window.print();
+        window.location.reload();
+    }
+
+    $(document).ready(function() {
+        $('#order-screenshot').on('click', function() {
+            var $btnScreenshot = $(this);
+            var $btnPrint = $('button[onclick="printInvoice()"]');
+            
+            $btnScreenshot.hide();
+            $btnPrint.hide();
+
+            var element = document.querySelector("#printableInvoice"); 
+            
+            html2canvas(element, {
+                useCORS: true,
+                allowTaint: false, 
+                scale: 2,
+                backgroundColor: "#ffffff"
+            }).then(canvas => {
+                $btnScreenshot.show();
+                $btnPrint.show();
+                
+                var a = document.createElement('a');
+                a.href = canvas.toDataURL("image/jpeg", 0.9);
+                a.download = 'Order_Invoice_' + getRandomString(6) + '.jpg';
+                a.click();
+            }).catch(err => {
+                console.error("Screenshot error: ", err);
+                $btnScreenshot.show();
+                $btnPrint.show();
+            });
+        });
+    });
+</script>
+
+{{ footer }}

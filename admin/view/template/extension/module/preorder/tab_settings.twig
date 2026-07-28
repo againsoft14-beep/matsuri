@@ -1,0 +1,275 @@
+<table class="table">
+
+<tr>
+  <td class="col-xs-3"><h5><strong>{{ text_button_name }}</strong></h5></td>
+    <td>
+      <div class="col-xs-4">
+         {% for language in languages %}
+            <div class="input-group" style="margin:10px auto;">
+              <div class="input-group-addon"><img src="{{ language.flag_url }}" title="{{ language.name }}" /></div>
+              <input placeholder="{{ text_pre_order }}" class="form-control" type="text" name="preorder[ButtonName][{{ language.language_id }}]" value="{{ data.preorder.ButtonName[language.language_id] ?: text_pre_order }}" />
+            </div>
+          {% endfor %}
+      </div>
+    </td>
+</tr>
+<tr><td colspan="2"><h3 style="margin-top:20px">Notification Bar</h3></td></tr>
+<tr>
+  <td class="col-xs-3"><h5><strong>{{ text_date_note }}</strong></h5>
+      <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_date_note_help }}</span>
+    </td>
+    <td>
+      <div class="col-xs-8">
+         {% for language in languages %}
+            <div class="input-group" style="margin:10px auto;">
+              <div class="input-group-addon"><img src="{{ language.flag_url }}" title="{{ language.name }}" /></div>
+              <input placeholder="{{ text_date_note_example }}" class="form-control" type="text" name="preorder[DateNote][{{ language.language_id }}]" value="{{ data.preorder.DateNote[language.language_id] ?: '' }}" />
+            </div>
+          {% endfor %}
+      </div>
+    </td>
+</tr>
+ <tr id="custom_settings" class="customCssForm">
+  <td class="col-xs-3"><h5><strong>{{ text_custom_colors }}</strong></h5>
+      <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_custom_colors_help }}</span>
+    </td>
+    <td class="col-xs-8">
+        <div class="col-xs-5">
+            <div class="customDesignColors form-group">
+                <div class="input-group" id="po_font_color">
+                    <span class="input-group-addon">{{ text_text }}</span>
+                    <input name="preorder[FontColor]" class="form-control colorp" type="text" value="{{ data.preorder.FontColor ?: '#fff'  }}">
+                  <span class="input-group-addon"><i class="colorpicker_box_color"></i></span>
+                </div>
+            </div>
+            <div class="customDesignColors form-group">
+                <div class="input-group" id="po_bg_color">
+                    <span class="input-group-addon">{{ text_background }}</span>
+                    <input name="preorder[BackgroundColor]" class="form-control colorp" type="text" value="{{ data.preorder.BackgroundColor ?: '#19BDF0'  }}">
+                  <span class="input-group-addon"><i class="colorpicker_box_color"></i></span>
+                </div>
+            </div>
+            <div class="customDesignColors form-group">
+                <div class="input-group" id="po_border_color">
+                    <span class="input-group-addon">{{ text_border }}</span>
+                    <input name="preorder[BorderColor]" class="form-control colorp" type="text" value="{{ data.preorder.BorderColor ?: '#19BDF0'  }}">
+                  <span class="input-group-addon"><i class="colorpicker_box_color"></i></span>
+                </div>
+            </div>
+        </div>
+    </td>
+<tr><td colspan="2"><h3 style="margin-top:20px">Mail Notification</h3></td></tr>
+</tr>
+  <tr>
+    <td class="col-xs-3">
+      <h5><strong>{{ text_admin_notification }}</strong></h5>
+      <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_admin_notification_help }}</span>
+    </td>
+    <td>
+      <div class="col-xs-4">
+          <select name="preorder[Notifications]" id="admin_notification" class="preorderNotifications form-control">
+             <option value="yes" {{ not data.preorder.Notifications or data.preorder.Notifications == 'yes' ? 'selected' }}>{{ text_enabled }}</option>
+             <option value="no" {{ data.preorder.Notifications == 'no' ? 'selected' }}>{{ text_disabled }}</option>
+          </select>
+      </div>
+    </td>
+  </tr>
+    <tr class="admin_email_fields" style="display:none;">
+        <td class="col-xs-3">
+            <h5><strong>{{ text_admin_email }}</strong></h5>
+            <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_admin_email_help }}</span>
+        </td>
+        <td>
+            <div class="col-xs-12">
+                <ul class="nav nav-tabs">
+                    {% for language in languages %}
+                        <li {{ loop.first ? 'class="active"' }}><a href="#admin-emailtab-{{ language.language_id }}" data-toggle="tab"><img src="{{ language.flag_url }}"/> {{ language.name }}</a></li>
+                    {% endfor %}
+                </ul>
+                <div class="tab-content">
+                    {% for language in languages %}
+                        <div id="admin-emailtab-{{ language.language_id }}" language-id="{{ language.language_id }}" class="row-fluid tab-pane language {{ loop.first ? 'active' }}">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h5><strong>{{ text_email_subject }}</strong></h5>
+
+                                    <input name="preorder[AdminEmailSubject][{{ language.code }}]" class="input-xxlarge form-control" type="text" value="{{ data.preorder.AdminEmailSubject[language.code] ?: text_admin_email_subject }}" />
+                                 </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <textarea id="admin_email_text_{{ language.code }}" name="preorder[AdminEmailText][{{ language.code }}]" style="height:80px;" data-toggle="summernote" data-lang="" class="preorderEmailText form-control">
+                                        {{ data.preorder.AdminEmailText[language.code] ?: text_admin_email_body }}
+                                    </textarea>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </td>
+    </tr>
+
+  <tr>
+    <td class="col-xs-3">
+      <h5><strong>{{ text_customer_notification }}</strong></h5>
+      <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_customer_notification_help }}</span>
+    </td>
+    <td>
+      <div class="col-xs-4">
+          <select name="preorder[CustomerNotifications]" id="customer_notification" class="preorderNotifications form-control">
+             <option value="yes" {{ not data.preorder.CustomerNotifications or data.preorder.CustomerNotifications == 'yes' ? 'selected' }}>{{ text_enabled }}</option>
+             <option value="no" {{ data.preorder.CustomerNotifications == 'no' ? 'selected' }}>{{ text_disabled }}</option>
+          </select>
+      </div>
+    </td>
+  </tr>
+
+  <tr class="customer_email_fields" style="display:none;">
+    <td class="col-xs-3">
+      <h5><strong>{{ text_image_size }}</strong></h5>
+      <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_image_size_help }}</span>
+    </td>
+    <td>
+     <div class="form-group">
+            <div class="input-group col-xs-5">
+                <span class="input-group-addon">{{ text_width }}</span>
+                <input name="preorder[ImageWidth]" class="form-control" type="text" value="{{ data.preorder.ImageWidth ?: '200' }}">
+                <span class="input-group-addon">px</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="input-group col-xs-5">
+                <span class="input-group-addon">{{ text_height }}</span>
+                <input name="preorder[ImageHeight]" class="form-control" type="text" value="{{ data.preorder.ImageHeight ?: '200' }}">
+                <span class="input-group-addon">px</span>
+            </div>
+        </div>
+    </td>
+  </tr>
+
+  <tr class="customer_email_fields" style="display:none;">
+    <td class="col-xs-3">
+        <h5><strong>{{ text_email }}</strong></h5>
+        <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_email_help }}</span>
+    </td>
+    <td>
+    <div class="col-xs-12">
+          <ul class="nav nav-tabs">
+      {% for language in languages %}
+      <li {{ loop.first ? 'class="active"' }}><a href="#emailtab-{{ language.language_id }}" data-toggle="tab"><img src="{{ language.flag_url }}"/> {{ language.name }}</a></li>
+             {% endfor %}
+          </ul>
+          <div class="tab-content">
+            {% for language in languages %}
+            <div id="emailtab-{{ language.language_id }}" language-id="{{ language.language_id }}" class="row-fluid tab-pane language {{ loop.first ? 'active' }}">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h5><strong>{{ text_email_subject }}</strong></h5>
+
+                                <input name="preorder[EmailSubject][{{ language.code }}]" class="input-xxlarge form-control" type="text" value="{{ data.preorder.EmailSubject[language.code] ?: text_pre_order }}" />
+                             </div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <div class="col-md-12">
+                                <textarea id="email_text_{{ language.code }}" name="preorder[EmailText][{{ language.code }}]" style="height:80px;" data-toggle="summernote" data-lang="" class="preorderEmailText form-control">{{ data.preorder.EmailText[language.code] ?: text_email_body }}
+                              </textarea>
+                            </div>
+                        </div>
+                    </div>
+               {% endfor %}
+          </div>
+      </div>
+
+    </td>
+</tr>
+<tr>
+  <td class="col-xs-3"><h5><strong>{{ text_custom_css }}</strong></h5></td>
+  <td>
+    <div class="col-xs-12">
+      <textarea name="preorder[CustomCSS]" class="preorderCustomCSS form-control col-xs-12" rows="12">{{ data.preorder.CustomCSS ?: '' }}</textarea>
+    </div>
+  </td>
+</tr>
+</table>
+<script type="text/javascript"><!--
+
+$(document).ready(function(){
+    if ($('#admin_notification').val() == 'yes') {
+        $('.admin_email_fields').css("display","table-row");
+    }
+    if ($('#customer_notification').val() == 'yes') {
+        $('.customer_email_fields').css("display","table-row");
+    }
+});
+
+$('#admin_notification').change(function() {
+    if($(this).val() == 'yes') {
+        $('.admin_email_fields').fadeIn("slow");
+    } else {
+        $('.admin_email_fields').fadeOut("slow");
+    }
+});
+$('#customer_notification').change(function() {
+    if($(this).val() == 'yes') {
+        $('.customer_email_fields').fadeIn("slow");
+    } else {
+        $('.customer_email_fields').fadeOut("slow");
+    }
+});
+
+
+
+var colorpicker_change = function(input, box, color) {
+    if (input !== false) {
+      $(input).val(color);
+    }
+
+    $(box).css('background-color', color);
+  }
+
+  $('#po_font_color').ColorPicker({
+    color: $('#po_font_color').find('input').val(),
+    onChange : function(hsb, hex, rgb) {
+      colorpicker_change($('#po_font_color').find('input'), $('#po_font_color').find('.colorpicker_box_color'), '#' + hex);
+    }
+  });
+
+  $('#po_bg_color').ColorPicker({
+    color: $('#po_bg_color').find('input').val(),
+    onChange : function(hsb, hex, rgb) {
+      colorpicker_change($('#po_bg_color').find('input'), $('#po_bg_color').find('.colorpicker_box_color'), '#' + hex);
+    }
+  });
+
+  $('#po_border_color').ColorPicker({
+    color: $('#po_border_color').find('input').val(),
+    onChange : function(hsb, hex, rgb) {
+      colorpicker_change($('#po_border_color').find('input'), $('#po_border_color').find('.colorpicker_box_color'), '#' + hex);
+    }
+  });
+
+ {% if data.preorder.FontColor %}
+    colorpicker_change($('#po_font_color').find('input'), $('#po_font_color').find('.colorpicker_box_color'), '{{ data.preorder.FontColor }}');
+  {% endif %}
+
+  {% if data.preorder.BackgroundColor %}
+    colorpicker_change($('#po_bg_color').find('input'), $('#po_bg_color').find('.colorpicker_box_color'), '{{ data.preorder.BackgroundColor }}');
+  {% endif %}
+
+   {% if data.preorder.BorderColor %}
+    colorpicker_change($('#po_border_color').find('input'), $('#po_border_color').find('.colorpicker_box_color'), '{{ data.preorder.BorderColor }}');
+   {% endif %}
+
+  $('#cp_color, #cp_bgcolor').find('input').change(function() {
+    colorpicker_change(false, $(this).closest('.colorpicker-component').find('.colorpicker_box_color'), $(this).val());
+  });
+
+  $('input.colorp, textarea').focus(function() {
+    $('#cp_color, #cp_bgcolor').ColorPickerHide();
+    $(this).trigger('click');
+  })
+
+//--></script>

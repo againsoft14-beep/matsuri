@@ -1,0 +1,21 @@
+<?php
+$_['heading_title']     = 'Product Gifts';
+$_['text_list']          = 'Gift List';
+$_['text_add']           = 'Add Gift';
+$_['text_success']       = 'Success: You have modified product gifts!';
+$_['entry_gifted_name']  = 'Gifted Person Name';
+$_['entry_gift_date']    = 'Gift Date';
+$_['entry_product']      = 'Product';
+$_['entry_quantity']     = 'Quantity';
+$_['entry_purchase_price'] = 'Purchase Price';
+$_['entry_additional_cost'] = 'Additional Cost';
+$_['column_gifted_name']  = 'Gifted Person';
+$_['column_product']      = 'Product';
+$_['column_quantity']     = 'Quantity';
+$_['column_purchase_price'] = 'Purchase Price';
+$_['column_additional_cost'] = 'Additional Cost';
+$_['column_gift_date']    = 'Gift Date';
+$_['error_permission']    = 'Warning: You do not have permission to modify product gifts!';
+$_['error_gifted_name']   = 'Gifted Person Name must be between 1 and 255 characters!';
+$_['error_gift_date']     = 'Gift Date is required!';
+$_['error_product']       = 'At least one product is required!';

@@ -1,0 +1,145 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <a href="{{ export }}" data-toggle="tooltip" title="Export" class="btn btn-success"><i class="fa fa-file-excel-o"></i> Export</a>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="Back" class="btn btn-default"><i class="fa fa-reply"></i></a>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      {{ breadcrumb }}
+    </div>
+  </div>
+  <div class="container-fluid" id="message-container">
+    {{ messages }}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-info-circle"></i> Employee Salary Breakdown</h3>
+      </div>
+      <div class="panel-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <td class="text-left">{{ column_name }}</td>
+                <td class="text-right">{{ column_basic }}</td>
+                <td class="text-right">Bonus</td>
+                <td class="text-right">Deduction</td>
+                <td class="text-right">{{ column_net_salary }}</td>
+                <td class="text-center">{{ column_status }}</td>
+                <td class="text-right">{{ column_action }}</td>
+              </tr>
+            </thead>
+            <tbody>
+              {% if results %}
+              {% for row in results %}
+                <tr id="row-{{ row.payroll_details_id }}"> {# Add ID to the row #}
+                  <td class="text-left">{{ row.name }}</td>
+                  <td class="text-right">{{ row.basic }}</td>
+                  <td class="text-right text-success">+ {{ row.bonus }}</td>
+                  <td class="text-right text-danger">- {{ row.deduction }}</td>
+                  <td class="text-right"><strong>{{ row.net_salary }}</strong></td>
+                  <td class="text-center status-cell"> {# Add class to identify the status cell #}
+                    {% if row.status == 'Paid' or row.status == 1 %}
+                    <span class="label label-success">Paid</span>
+                    {% else %}
+                    <span class="label label-warning">Pending</span>
+                    {% endif %}
+                  </td>
+                  <td class="text-right action-cell"> {# Add class to identify the buttons cell #}
+                    {% if row.status != 'Paid' and row.status != 1 %}
+                      <a href="{{ row.edit_link }}" data-toggle="tooltip" title="Edit Salary" class="btn btn-warning btn-sm btn-edit">
+                          <i class="fa fa-pencil"></i> Edit
+                      </a>
+                      <button type="button" onclick="payIndividual('{{ row.payroll_details_id }}', '{{ row.name }}');" data-toggle="tooltip" title="Pay Now" class="btn btn-primary btn-sm btn-pay">
+                        <i class="fa fa-money"></i> Pay
+                      </button>
+                    {% else %}
+                      <button class="btn btn-default btn-sm" disabled><i class="fa fa-check"></i> Paid</button>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              {% else %}
+              <tr>
+                <td class="text-center" colspan="7">{{ text_no_results }}</td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-edit-salary" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Edit Salary: <span id="emp-name"></span></h4>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-payroll-details-id">
+        <div class="form-group">
+          <label>Bonus</label>
+          <input type="number" id="edit-bonus" class="form-control" step="0.01">
+        </div>
+        <div class="form-group">
+          <label>Deduction</label>
+          <input type="number" id="edit-deduction" class="form-control" step="0.01">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" onclick="saveSalary();" class="btn btn-primary">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+
+
+function payIndividual(payroll_details_id, name) {
+    if (confirm('Are you sure you want to pay salary to ' + name + '?')) {
+        $.ajax({
+            url: 'index.php?route=extension/module/payroll/pay&user_token={{ user_token }}',
+            type: 'post',
+            data: { payroll_details_id: payroll_details_id },
+            dataType: 'json',
+            beforeSend: function() { 
+                $('#row-' + payroll_details_id + ' .btn-pay').button('loading');
+            },
+            complete: function() { $('#row-' + payroll_details_id + ' .btn-pay').button('reset'); },
+            success: function(json) {
+                if (json['success']) { 
+                   $('.alert-dismissible').remove();
+
+                if (json['success']) {
+                    var messageHtml = '<div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>';
+                    $('#content >.container-fluid:last').prepend(messageHtml);
+
+                    $('#row-' + payroll_details_id + ' .status-cell').html('<span class="label label-success">Paid</span>');
+
+                    $('#row-' + payroll_details_id + ' .action-cell').html('<button class="btn btn-default btn-sm" disabled><i class="fa fa-check"></i> Paid</button>');
+                    
+                    setTimeout(function() {
+                        $('#row-' + payroll_details_id).css('background-color', '');
+                    }, 2000);
+                }
+                
+                if (json['error']) {
+                    var errorHtml = '<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> ' + json['error'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>';
+                    $('.container-fluid:first').prepend(errorHtml);
+                }
+                }
+                else { alert(json['error']); }
+            }
+        });
+    }
+}
+</script>
+{{ footer }}

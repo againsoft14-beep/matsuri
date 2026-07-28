@@ -1,0 +1,83 @@
+<table id="ordersWrapper{{ store_id }}" class="table table-bordered table-hover" width="100%">
+    <thead>
+        <tr class="table-header">
+            <th width="5%">{{ text_order_id }}</th>
+            <th width="20%">{{ text_customer_email }}</th>
+            <th width="15%">{{ text_customer_name }}</th>
+            <th width="25%">{{ text_product }}</th>
+            <th width="10%">{{ text_date }}</th>
+            <th width="5%">{{ text_language }}</th>
+            <th width="5%">{{ text_actions }}</th>
+        </tr>
+    </thead>
+    <tbody>
+         {% for source in sources %}
+            <tr>
+                <td><a href="{{ source.order_info_url }}" target="_blank">{{ source.order_id }}</a></td>
+                <td>{{ source.email }}</td>
+                <td>{{ source.firstname }} {{ source.lastname }}</td>
+                <td>
+                    <a href="../index.php?route=product/product&product_id={{ source.product_id }}" target="_blank"><strong>{{ source.product_name }}</strong></a>
+                    {% for option in source.options %}
+                        <br><small class="preorder-product-option">{{ option.name }}: {{ option.value }}</small>
+                    {% endfor %}
+                </td>
+                <td>{{ source.date_created }}</td>
+                <td>{{ source.language }}</td>
+                <td><a onclick="removeCustomer('{{ source.preorder_id }}')" class="btn btn-sm btn-danger"><i class="fa fa-times"></i> {{ text_remove }}</a></td>
+            </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr><td colspan="7">
+            <div class="row">
+              <div class="col-sm-6 text-left">{{ pagination }}</div>
+              <div class="col-sm-6 text-right">{{ results }}</div>
+            </div>
+        </td></tr>
+    </tfoot>
+</table>
+<div style="float:right;padding: 5px;">
+    <a onclick="removeAll();" class="btn btn-small btn-info"><i class="fa fa-trash"></i>&nbsp;&nbsp;{{ text_remove_all }}</a>
+</div>
+<script>
+function removeCustomer(preorderID) {
+    var r=confirm("Are you sure you want to remove the customer?");
+    if (r==true) {
+        $.ajax({
+            url: 'index.php?route={{ modulePath }}/removecustomer&user_token={{ user_token }}',
+            type: 'post',
+            data: {'preorder_id': preorderID},
+            success: function(response) {
+                location.reload();
+            }
+        });
+    }
+}
+function removeAll() {
+    var r=confirm("Are you sure you want to remove all records?");
+    if (r==true) {
+        $.ajax({
+            url: 'index.php?route={{ modulePath }}/removeallcustomers&user_token={{ user_token }}',
+            type: 'post',
+            data: {'remove': r},
+            success: function(response) {
+                location.reload();
+            }
+        });
+    }
+}
+$(document).ready(function(){
+    $('#ordersWrapper{{ store_id }} .pagination a').click(function(e){
+        e.preventDefault();
+        $.ajax({
+            url: this.href,
+            type: 'get',
+            dataType: 'html',
+            success: function(data) {
+                $("#ordersWrapper{{ store_id }}").html(data);
+            }
+        });
+    });
+});
+</script>

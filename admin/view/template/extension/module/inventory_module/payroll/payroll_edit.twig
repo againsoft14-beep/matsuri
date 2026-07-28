@@ -1,0 +1,50 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-salary-edit" data-toggle="tooltip" title="Save" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="Cancel" class="btn btn-default"><i class="fa fa-reply"></i></a>
+      </div>
+      <h1>Edit Salary: {{ employee_name }}</h1>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> Adjust Salary Details</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-salary-edit" class="form-horizontal">
+          <input type="hidden" name="payroll_details_id" value="{{ payroll_details_id }}">
+          
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Basic Salary (Read Only)</label>
+            <div class="col-sm-10">
+              <input type="text" value="{{ basic }}" class="form-control" readonly />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-bonus">Bonus Amount</label>
+            <div class="col-sm-10">
+              <input type="number" name="bonus" value="{{ bonus }}" placeholder="Enter Bonus" id="input-bonus" class="form-control" step="0.01" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-deduction">Deduction Amount</label>
+            <div class="col-sm-10">
+              <input type="number" name="deduction" value="{{ deduction }}" placeholder="Enter Deduction" id="input-deduction" class="form-control" step="0.01" />
+            </div>
+          </div>
+
+          <div class="well">
+             <p><strong>Note:</strong> Net salary will be calculated automatically as: <em>Basic + Bonus - Deduction</em></p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{ footer }}

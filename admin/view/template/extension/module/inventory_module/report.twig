@@ -1,0 +1,258 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      
+      <h1>Inventory Report</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title"><i class="fa fa-calendar"></i> Select Report Period</h3>
+  </div>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-sm-5">
+        <div class="form-group">
+          <label class="control-label">Date Start</label>
+          <div class="input-group date">
+            <input type="text" name="filter_date_start" value="{{ filter_date_start }}" placeholder="YYYY-MM-DD" data-date-format="YYYY-MM-DD" class="form-control" />
+            <span class="input-group-btn"><button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button></span>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-5">
+        <div class="form-group">
+          <label class="control-label">Date End</label>
+          <div class="input-group date">
+            <input type="text" name="filter_date_end" value="{{ filter_date_end }}" placeholder="YYYY-MM-DD" data-date-format="YYYY-MM-DD" class="form-control" />
+            <span class="input-group-btn"><button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button></span>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-2">
+          <div class="form-group">
+            <label class="control-label">&nbsp;</label>
+            <div style="display: flex; gap: 5px;"> 
+              <button type="button" id="button-filter" class="btn btn-primary" data-toggle="tooltip" title="Apply Filter" style="flex: 1;">
+                <i class="fa fa-filter"></i> Filter
+              </button>
+              
+              <a href="index.php?route=extension/module/inventory_module/report&user_token={{ user_token }}" class="btn btn-default" data-toggle="tooltip" title="Reset" style="flex: 1;">
+                <i class="fa fa-refresh"></i> Reset
+              </a>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+    <div class="row">
+      <div class="col-lg-3 col-md-3 col-sm-6">
+        <div class="tile tile-primary">
+          <div class="tile-heading">Total Inventory Value <span class="pull-right">{{ total_items }} Items</span></div>
+          <div class="tile-body">
+            <i class="fa fa-shopping-cart"></i>
+            <h2 class="pull-right">{{ total_inventory_value }}</h2>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-3 col-sm-6">
+        <div class="tile tile-success" style="background-color: #27ae60;">
+          <div class="tile-heading">Gross Profit <span class="pull-right">{{ gross_profit_margin }}</span></div>
+          <div class="tile-body">
+            <i class="fa fa-money"></i>
+            <h2 class="pull-right">{{ total_profit }}</h2>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-3 col-sm-6">
+        <div class="tile tile-warning">
+          <div class="tile-heading">Current Stock (Total Pcs)</div>
+          <div class="tile-body">
+            <i class="fa fa-cubes"></i>
+            <h2 class="pull-right">{{ total_current_stock_qty }}</h2>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-3 col-sm-6">
+        <div class="tile tile-danger">
+          <div class="tile-heading">Low Stock Items</div>
+          <div class="tile-body">
+            <i class="fa fa-exclamation-triangle"></i>
+            <h2 class="pull-right">{{ low_stock_items }}</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+   
+    <div class="row">
+      <div class="col-md-7">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-credit-card"></i> Expenses by Category ({{ filter_date_start }} to {{ filter_date_end }})</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr style="background: #f9f9f9;">
+                  <td class="text-left">Category Name</td>
+                  <td class="text-right">Amount</td>
+                </tr>
+              </thead>
+              <tbody>
+                {% if expenses %}
+                  {% for expense in expenses %}
+                  <tr>
+                    <td class="text-left">{{ expense.category }}</td>
+                    <td class="text-right">{{ expense.total }}</td>
+                  </tr>
+                  {% endfor %}
+                  <tr style="font-weight: bold; background: #f1f1f1;">
+                    <td class="text-right">Total Period Expense</td>
+                    <td class="text-right text-danger">{{ total_expense }}</td>
+                  </tr>
+                {% else %}
+                  <tr><td colspan="2" class="text-center">No expenses recorded for this period.</td></tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-5">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-calculator"></i> Final Business Summary</h3>
+          </div>
+          <div class="panel-body">
+            <div class="list-group">
+              <div class="list-group-item">
+                <span class="badge" style="background: #27ae60;">{{ total_profit }}</span> Gross Inventory Profit
+              </div>
+              <div class="list-group-item">
+                <span class="badge" style="background: #e74c3c;">- {{ total_expense }}</span> Total Business Expenses
+              </div>
+              <div class="list-group-item" style="font-size: 18px; font-weight: bold; background: #f8f9fa; border-top: 2px solid #ddd;">
+                <span class="pull-right text-primary">{{ final_net_profit }}</span> Final Net Profit
+              </div>
+            </div>
+            <div class="well well-sm" style="margin-bottom: 0; background: #fff;">
+              <small class="text-muted"><i class="fa fa-info-circle"></i> <strong>Net Profit Calculation:</strong> (Total Sales Revenue - Product Purchase Cost & Additional Costs) - General Expenses.</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-trophy"></i> Top Selling Products</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr style="background: #f9f9f9;">
+                  <td class="text-left">Product Name</td>
+                  <td class="text-right">Sold Qty</td>
+                  <td class="text-right">Sale Price</td>
+                </tr>
+              </thead>
+              <tbody>
+                {% if top_selling_products %}
+                  {% for product in top_selling_products %}
+                  <tr>
+                    <td class="text-left">{{ product.name }}</td>
+                    <td class="text-right">{{ product.sold_qty }}</td>
+                    <td class="text-right">{{ product.revenue }}</td>
+                  </tr>
+                  {% endfor %}
+                {% else %}
+                <tr><td class="text-center" colspan="3">No results!</td></tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-usd"></i> Most Profitable Lots</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr style="background: #f9f9f9;">
+                  <td class="text-left">Lot Number</td>
+                  <td class="text-left">Batch Date</td>
+                  <td class="text-right">Profit</td>
+                </tr>
+              </thead>
+              <tbody>
+                {% if profitable_lots %}
+                  {% for lot in profitable_lots %}
+                  <tr>
+                    <td class="text-left">#{{ lot.lot_number }}</td>
+                    <td class="text-left">{{ lot.date }}</td>
+                    <td class="text-right">{{ lot.profit }}</td>
+                  </tr>
+                  {% endfor %}
+                {% else %}
+                <tr><td class="text-center" colspan="3">No results!</td></tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+
+    // ==============================
+    // DATE PICKER INIT
+    // ==============================
+    $('.date').datetimepicker({
+        pickTime: false,
+        format: 'YYYY-MM-DD'
+    });
+
+    // ==============================
+    // FILTER BUTTON CLICK
+    // ==============================
+    $('#button-filter').on('click', function() {
+        var url = 'index.php?route=extension/module/inventory_module/report&user_token={{ user_token }}';
+
+        var filter_date_start = $('input[name="filter_date_start"]').val();
+        var filter_date_end = $('input[name="filter_date_end"]').val();
+
+        if (filter_date_start) {
+            url += '&filter_date_start=' + encodeURIComponent(filter_date_start);
+        }
+
+        if (filter_date_end) {
+            url += '&filter_date_end=' + encodeURIComponent(filter_date_end);
+        }
+
+        location = url;
+    });
+
+});
+</script>
+{{ footer }}

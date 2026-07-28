@@ -1,0 +1,1001 @@
+{{ header }}{{ column_left }}
+
+<div id="content">
+	<link href="view/javascript/bs-colorpicker/css/colorpicker.css" media="screen" rel="stylesheet" type="text/css"/>
+	<script src="view/javascript/bs-colorpicker/js/colorpicker.js" type="text/javascript"></script>
+	<script src="view/javascript/jquery/jquery-ui/jquery-ui.js"></script>
+	<link type="text/css" href="view/javascript/desktop_theme.css" rel="stylesheet" media="screen" />
+	<div class="page-header">
+		<div class="container-fluid">
+			<div class="pull-right">
+				<button type="submit" id="button-save" form="form-setting" data-toggle="tooltip"
+						title="{{ button_save }}" class="btn btn-info">{{ button_save }}
+				</button>
+			</div>
+			<h1>{{ heading_title }}</h1>
+			<ul class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %}
+					<li>
+						<a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a>
+					</li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+
+	<div class="container-fluid">
+		{% if success %}
+			<div class="alert alert-success">
+				<i class="fa fa-check-circle"></i>
+				{{ success }}
+				<button class="close" data-dismiss="alert" type="button">&times;</button>
+			</div>
+		{% endif %}
+		{% if error_warning %}
+			<div class="alert alert-danger alert-dismissible">
+				<i class="fa fa-exclamation-circle"></i>
+				{{ error_warning }}
+				<button class="close" data-dismiss="alert" type="button">&times;</button>
+			</div>
+		{% endif %}
+
+		<form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-setting" class="form-horizontal">
+			<div class="panel-wrapper">
+				<div class="panel-left">
+					<div class="setting-header">{{ heading_title }}</div>
+					<ul class="menu list-unstyled">
+						<li class="active">
+							<a data-toggle="tab" href="#tab-general">
+								<i class="fa fa-cog fa-fw"></i>
+								{{ tab_general }}</a>
+						</li>
+						<li>
+							<a data-toggle="tab" href="#tab-account-whatsapp">
+								<i class="fa fa-whatsapp fw"></i>
+								{{ tab_whatsapp }}</a>
+						</li>
+						<li>
+							<a data-toggle="tab" href="#tab-translation">
+								<i class="fa fa-language fw"></i>
+								{{ tab_translation }}</a>
+						</li>
+
+					</ul>
+				</div>
+
+				<div class="panel-right">
+					<div class="store-header">
+						<div class="form-group">
+
+						</div>
+					</div>
+
+					<div class="main-content">
+						<div class="tab-content">
+							<div class="clearfix"></div>
+							<div class="tab-pane active" id="tab-general">
+
+								<div class="form-group">
+									<label class="col-sm-3">{{ entry_status }}</label>
+									<div class="col-sm-9">
+										<input type="checkbox" name="status" data-control="checkbox" value="1"
+											data-off-label="{{ text_no }}"
+											data-on-label="{{ text_yes }}" {% if status %} checked="checked" {% endif %} />
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-3">{{ entry_type }}</label>
+									<div class="col-sm-9">
+										<div class="btn-group" data-toggle="buttons" id="chat-button">
+											<label class="btn btn-success btn-sm btn-chat {% if type == "wa" %}active{% endif %}" {% if type == "wa" %}active{% endif %}>
+												<input type="radio" name="type" value="wa" {% if type == "wa" %}checked="checked"{% endif %}> Whatsapp Button
+											</label>
+											<label class="btn btn-success btn-sm btn-chat {% if type == "im" %}active{% endif %}" {% if type == "im" %}active{% endif %}>
+												<input type="radio" name="type" value="im" {% if type == "im" %}checked="checked"{% endif %}> Instant Messaging
+											</label>
+											<label class="btn btn-success btn-sm btn-chat {% if type == "tw" %}active{% endif %}" {% if type == "tw" %}active{% endif %}>
+												<input type="radio" name="type" value="tw" {% if type == "tw" %}checked="checked"{% endif %}> Tawk.to Chat App
+											</label>
+											<label class="btn btn-success btn-sm btn-chat {% if type == "fb" %}active{% endif %}" {% if type == "fb" %}active{% endif %}>
+												<input type="radio" name="type" value="fb" {% if type == "fb" %}checked="checked"{% endif %}> Facebook Messenger
+											</label>
+										</div>
+									</div>
+								</div>
+
+								<div id="tawkto" class="form-group required">
+									<label class="col-sm-3">{{ entry_tawkto }}
+										<span class="help">
+														{{ help_tawkto }}
+													</span>
+									</label>
+									<div class="col-sm-5">
+										<input name="tawkto_property_id" type="text" class="form-control"
+											value="{{ tawkto_property_id }}">
+										{% if error_tawkto %}
+											<div class="text-danger">{{ error_tawkto }}</div>
+										{% endif %}
+									</div>
+								</div>
+
+								<div id="fb" class="form-group required">
+									<label class="col-sm-3">{{ entry_fb_messenger }}
+										<span class="help">
+														{{ help_fb_messenger }}
+													</span>
+									</label>
+									<div class="col-sm-5">
+										<input name="fb_page_id" type="text" class="form-control" value="{{ fb_page_id }}">
+										{% if error_fb %}
+											<div class="text-danger">{{ error_fb }}</div>
+										{% endif %}
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-3">{{ entry_desktop }}
+										<span class="help">
+														{{ help_desktop }}
+													</span>
+									</label>
+									<div class="col-sm-5">
+										<input type="checkbox" name="desktop" data-control="checkbox" value="1"
+											data-off-label="{{ text_no }}"
+											data-on-label="{{ text_yes }}" {% if desktop %} checked="checked" {% endif %} />
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3">{{ entry_mobile }}
+										<span class="help">
+														{{ help_mobile }}
+													</span>
+									</label>
+									<div class="col-sm-5">
+										<input type="checkbox" name="mobile" data-control="checkbox" value="1"
+											data-off-label="{{ text_no }}"
+											data-on-label="{{ text_yes }}" {% if mobile %} checked="checked" {% endif %} />
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-3">{{ entry_hide_prechattext }}
+										<span class="help">
+														{{ help_hide_prechattext }}
+													</span>
+									</label>
+									<div class="col-sm-5">
+										<input type="checkbox" name="hide_prechattext" data-control="checkbox" value="1"
+											data-off-label="{{ text_no }}"
+											data-on-label="{{ text_yes }}" {% if hide_prechattext %} checked="checked" {% endif %}
+											value="1"/>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-3">{{ entry_mobile_compatibility }}
+										<span class="help">
+														{{ help_mobile_compatibility }}
+										</span>
+									</label>
+									<div class="col-sm-5">
+										<input type="checkbox" name="mobile_compatibility" data-control="checkbox" value="1"
+											data-off-label="{{ text_no }}"
+											data-on-label="{{ text_yes }}" {% if mobile_compatibility %} checked="checked" {% endif %}
+											value="1"/>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-3">{{ entry_wa_show_homepage }}
+										<span class="help">
+														{{ help_wa_show_homepage }}
+										</span>
+									</label>
+									<div class="col-sm-5">
+										<input type="checkbox" name="wa_show_homepage" data-control="checkbox" value="1"
+											data-off-label="{{ text_no }}"
+											data-on-label="{{ text_yes }}" {% if wa_show_homepage %} checked="checked" {% endif %}
+											value="1"/>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-3">{{ entry_button_placement }}
+										<span class="help">
+														{{ help_button_placement }}
+										</span>
+									</label>
+									<div class="col-sm-5">
+										<input type="text" class="form-control" name="button_placement" value="{{ button_placement }}"/>
+									</div>
+								</div>
+								<fieldset>
+									<legend>{{ entry_desktop_positioning }}</legend>
+									<div class="form-group">
+										<label class="col-sm-3">{{ entry_bottom_margin }}
+											<span class="help">
+														{{ help_bottom_margin }}
+													</span>
+										</label>
+										<div class="col-sm-3">
+											<input type="number" name="bottom_margin_desktop" class="form-control"
+												value="{{ bottom_margin_desktop }}"/>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="col-sm-3">{{ entry_right_margin }}
+											<span class="help">
+														{{ help_right_margin }}
+													</span>
+										</label>
+										<div class="col-sm-3">
+											<input type="number" name="right_margin_desktop" class="form-control"
+												value="{{ right_margin_desktop }}"/>
+										</div>
+									</div>
+								</fieldset>
+
+								<fieldset>
+									<legend>{{ entry_mobile_positioning }}</legend>
+									<div class="form-group">
+										<label class="col-sm-3">{{ entry_bottom_margin }}
+											<span class="help">
+														{{ help_bottom_margin }}
+													</span>
+										</label>
+										<div class="col-sm-3">
+											<input type="number" name="bottom_margin_mobile" class="form-control"
+												value="{{ bottom_margin_mobile }}"/>
+										</div>
+									</div>
+
+									<div class="form-group">
+										<label class="col-sm-3">{{ entry_right_margin }}
+											<span class="help">
+														{{ help_right_margin }}
+													</span>
+										</label>
+										<div class="col-sm-3">
+											<input type="number" name="right_margin_mobile" class="form-control"
+												value="{{ right_margin_mobile }}"/>
+										</div>
+									</div>
+								</fieldset>
+
+								<div class="form-group">
+									<label class="col-sm-3" for="color-scheme">
+										{{ entry_color }}
+									</label>
+									<div class="col-sm-3">
+										<div class="input-group colorpicker-component">
+											<input id="color-scheme" type="text" name="color" value="{{ color }}"
+												class="form-control"/><span class="input-group-addon"
+																			id="color-scheme-button">
+													<i></i>
+												</span>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="tab-pane" id="tab-account-whatsapp">
+								<div class="col-sm-3">
+									<br>
+									<ul class="nav nav-pills nav-stacked" id="address">
+										<li class="active">
+											<a data-toggle="tab" href="#tab-customer">{{ entry_account_wa }}</a>
+										</li>
+										{% set wa_row = 1 %}
+										{% for whatsapp in whatsapps %}
+											<li>
+												<a data-toggle="tab" href="#tab-whatsapp{{ wa_row }}">
+													<i class="fa fa-minus-circle"
+													onclick="$('#address a:first').tab('show'); $('#address a[href=\'#tab-whatsapp{{ wa_row }}\']').parent().remove(); $('#tab-whatsapp{{ wa_row }}').remove();"></i>
+													{{ text_whatsapp_account }}
+													{{ wa_row }}</a>
+											</li>
+											{% set wa_row = wa_row + 1 %}
+										{% endfor %}
+										<li id="account-add">
+											<a onclick="addAccount();">
+												<i class="fa fa-plus-circle"></i>
+												{{ button_whatsapp_add }}</a>
+										</li>
+									</ul>
+								</div>
+
+								<div class="col-sm-9">
+									<br>
+									<div class="tab-content" id="whatsapp_list">
+										{% set wa_row = 1 %}
+										{% for whatsapp in whatsapps %}
+											<div class="tab-pane" id="tab-whatsapp{{ wa_row }}">
+												<div class="form-group">
+													<label class="col-sm-3"
+														for="whatsapp[{{ wa_row }}][status]">
+														{{ entry_enable }}
+													</label>
+													<div class="col-sm-9">
+														<input name="whatsapp[{{ wa_row }}][status]" type="checkbox"
+															data-control="checkbox" value="1"
+															data-off-label="{{ text_no }}"
+															data-on-label="{{ text_yes }}" {% if whatsapp.status %} checked="checked" {% endif %}>
+													</div>
+												</div>
+
+												<div class="form-group">
+													<label class="col-sm-3"
+														for="whatsapp[{{ wa_row }}][inline_chat_btn]">
+														{{ entry_inline_chat_btn }}
+														<span class="help">
+														{{ help_inline_chat_btn }}
+													</span>
+													</label>
+													<div class="col-sm-9">
+														<input name="whatsapp[{{ wa_row }}][inline_chat_btn]"
+															type="checkbox" data-control="checkbox" value="1"
+															data-off-label="{{ text_no }}"
+															data-on-label="{{ text_yes }}" {% if whatsapp.inline_chat_btn %} checked="checked" {% endif %}>
+													</div>
+												</div>
+
+												<input type="hidden" name="address[{{ wa_row }}][online_status]"
+													value="{{ whatsapp.online_status }}"/>
+												<div class="form-group">
+													<label class="col-sm-3"
+														for="input-whatsapp{{ wa_row }}">{{ entry_online_status }} <span
+																class="help">{{ help_online_status }}</span></label>
+													<div class="col-sm-9">
+														<div class="btn-group btn-group-toggle" data-toggle="buttons">
+															<label class="btn btn-success {% if whatsapp.online_status == 1 or whatsapp.online_status == 0 %} active {% endif %}">
+																<input type="radio"
+																	name="whatsapp[{{ wa_row }}][online_status]"
+																	id="option1"
+																	autocomplete="off" {% if whatsapp.online_status == 1 or whatsapp.online_status == 0 %} checked {% endif %}
+																	value="1"> Online
+															</label>
+															<label class="btn btn-success {% if whatsapp.online_status == 2 %} active {% endif %}">
+																<input type="radio"
+																	name="whatsapp[{{ wa_row }}][online_status]"
+																	id="option1"
+																	autocomplete="off" {% if whatsapp.online_status == 2 %} checked {% endif %}
+																	value="2"> Away
+															</label>
+															<label class="btn btn-success {% if whatsapp.online_status == 3 %} active {% endif %}">
+																<input type="radio"
+																	name="whatsapp[{{ wa_row }}][online_status]"
+																	id="option1"
+																	autocomplete="off" {% if whatsapp.online_status == 3 %} checked {% endif %}
+																	value="3"> Offline
+															</label>
+														</div>
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="col-sm-3"
+														for="input-whatsapp{{ wa_row }}">{{ entry_online_time }}</label>
+													<div class="col-sm-9">
+														<label class="col-sm-1" style="margin-right: 16px;"
+															for="input-whatsapp{{ wa_row }}">{{ entry_from }}</label>
+														<div class="col-sm-4">
+															<select name="whatsapp[{{ wa_row }}][online_time_from]"
+																	class="form-control">
+																{% for i in range(1, 24) %}
+																	<option value="{{ i }}" {% if i == whatsapp.online_time_from %} selected="selected" {% endif %}>
+																		{% if i < 10 %} 0{{ i }}:00{% else %} {{ i }}:00 {% endif %}
+																	</option>
+																{% endfor %}
+															</select>
+														</div>
+														<label class="col-sm-1"
+															for="input-whatsapp{{ wa_row }}">{{ entry_to }}</label>
+														<div class="col-sm-4">
+															<select name="whatsapp[{{ wa_row }}][online_time_to]"
+																	class="form-control">
+																{% for i in range(1,24) %}
+																	<option value="{{ i }}" {% if i == whatsapp.online_time_to %} selected="selected" {% endif %}>
+																		{% if i < 10 %} 0{{ i }}:00{% else %} {{ i }}:00 {% endif %}
+																	</option>
+																{% endfor %}
+															</select>
+														</div>
+
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="col-sm-3"
+														for="input-whatsapp{{ wa_row }}">{{ entry_away_time }}</label>
+													<div class="col-sm-9">
+														<label class="col-sm-1" style="margin-right: 16px;"
+															for="input-whatsapp{{ wa_row }}">{{ entry_from }}</label>
+														<div class="col-sm-4">
+															<select name="whatsapp[{{ wa_row }}][away_time_from]"
+																	class="form-control">
+																{% for i in range(1, 24) %}
+																	<option value="{{ i }}" {% if i == whatsapp.away_time_from %} selected="selected" {% endif %}>
+																		{% if i < 10 %} 0{{ i }}:00{% else %} {{ i }}:00 {% endif %}
+																	</option>
+																{% endfor %}
+															</select>
+														</div>
+														<label class="col-sm-1"
+															for="input-whatsapp{{ wa_row }}">{{ entry_to }}</label>
+														<div class="col-sm-4">
+															<select name="whatsapp[{{ wa_row }}][away_time_to]"
+																	class="form-control">
+																{% for i in range(1,24) %}
+																	<option value="{{ i }}" {% if i == whatsapp.away_time_to %} selected="selected" {% endif %}>
+																		{% if i < 10 %} 0{{ i }}:00{% else %} {{ i }}:00 {% endif %}
+																	</option>
+																{% endfor %}
+															</select>
+														</div>
+
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="col-sm-3"
+														for="input-whatsapp{{ wa_row }}">{{ entry_offline_time }}</label>
+													<div class="col-sm-9">
+														<code>{{ text_offline_time }}</code>
+													</div>
+												</div>
+												<input type="hidden" name="address[{{ wa_row }}][name]"
+													value="{{ whatsapp.name }}"/>
+												<div class="form-group">
+													<label class="col-sm-3"
+														for="input-whatsapp{{ wa_row }}">{{ entry_whatsapp_name }}</label>
+													<div class="col-sm-5">
+														<input type="text" name="whatsapp[{{ wa_row }}][name]"
+															value="{{ whatsapp.name }}"
+															placeholder="{{ entry_whatsapp_name }}"
+															id="input-whatsapp{{ wa_row }}" class="form-control"/>
+														{% if error_whatsapp[wa_row].name %}
+															<div class="text-danger">{{ error_whatsapp[wa_row].name }}</div>
+														{% endif %}
+													</div>
+												</div>
+
+												<input type="hidden" name="address[{{ wa_row }}][position]"
+													value="{{ whatsapp.position }}"/>
+												<div class="form-group">
+													<label class="col-sm-3"
+														for="input-whatsapp{{ wa_row }}">{{ entry_whatsapp_position }}</label>
+													<div class="col-sm-5">
+														<input type="text" name="whatsapp[{{ wa_row }}][position]"
+															value="{{ whatsapp.position }}"
+															placeholder="{{ entry_whatsapp_position }}"
+															id="input-whatsapp{{ wa_row }}" class="form-control"/>
+														{% if error_whatsapp[wa_row].position %}
+															<div class="text-danger">{{ error_whatsapp[wa_row].position }}</div>
+														{% endif %}
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="col-sm-3" for="input-whatsapp1">
+														{{ entry_link_type }}
+														<span class="help">{{ help_link_type }}</span>
+													</label>
+													<div class="col-sm-9">
+														<div class="btn-group btn-group-toggle link-type" data-toggle="buttons" data-wa-row="{{ wa_row }}">
+															<label class="btn btn-success  {% if whatsapp.link_type == 1 or whatsapp.link_type == 0 %}active{% endif %}  btn-sm" onclick="link_type(1, {{wa_row}})">
+																<input type="radio" name="whatsapp[{{ wa_row }}][link_type]"  {% if whatsapp.link_type == 1 or whatsapp.link_type == 0 %} checked="checked" {% endif %} value="1"> {{ text_whatsapp_button }}
+															</label>
+															<label class="btn btn-success {% if whatsapp.link_type == 2 %}active{% endif %}  btn-sm" onclick="link_type(2, {{wa_row}})">
+																<input type="radio" name="whatsapp[{{ wa_row }}][link_type]" value="2" {% if whatsapp.link_type == 2 %} checked="checked" {% endif %}> {{ text_custom_link }}
+															</label>
+														</div>
+													</div>
+												</div>
+												<input type="hidden" name="address[{{ wa_row }}][no_wa]"
+													value="{{ whatsapp.no_wa }}"/>
+												<input type="hidden" name="address[{{ wa_row }}][wa_country]"
+													value="{{ whatsapp.wa_country }}"/>
+												<div class="form-group" id="wa-number{{wa_row}}" {% if whatsapp.link_type == 2 %}style
+												="display:none;"{% endif %}>
+													<label class="col-sm-3">{{ entry_no_wa }}</label>
+													<div class="col-sm-9">
+														<div class="col-sm-2" style="padding: 0;">
+															<span class="marker-down"></span>
+															<select data-live-search="true"
+																	data-selected="{{ whatsapp.wa_country }}"
+																	name="whatsapp[{{ wa_row }}][wa_country]"
+																	class="country_code{{ wa_row }}">
+															</select>
+														</div>
+														<div class="col-sm-5">
+															<input value="{{ whatsapp.wa_number }}"
+																name="whatsapp[{{ wa_row }}][wa_number]" type="text"
+																class="form-control" aria-describedby="basic-addon1">
+														</div>
+													</div>
+												</div>
+												<div class="form-group" id="custom-link{{wa_row}}" {% if whatsapp.link_type == 1 %}style
+												="display:none;"{% endif %}>
+													<label class="col-sm-3">{{ text_custom_link }}</label>
+													<div class="col-sm-6">
+														<input value="{{ whatsapp.custom_link }}"
+															name="whatsapp[{{ wa_row }}][custom_link]" type="text"
+															class="form-control">
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="col-sm-3">
+														{{ entry_whatsapp_picture }}
+													</label>
+													<div class="col-sm-9">
+														<a class="img-thumbnail" data-toggle="image" href=""
+														id="thumb-icon{{ wa_row }}"><img
+																	src="{{ whatsapp.logo_placeholder }}" alt="" title=""
+																	data-placeholder="{{ whatsapp.logo_placeholder }}"/></a>
+														<input id="thumb-input{{ wa_row }}" type="hidden"
+															name="whatsapp[{{ wa_row }}][profile_picture]"
+															value="{{ whatsapp.profile_picture }}"/>
+													</div>
+												</div>
+
+												<div class="form-group">
+													<label class="col-sm-3" for="input-sort-order">{{entry_whatsapp_sort_order}}</label>
+													<div class="col-sm-3">
+														<input type="text" name="whatsapp[{{ wa_row }}][sort_order]" value="{{ whatsapp.sort_order }}" placeholder="{{entry_whatsapp_sort_order}}" id="input-sort-order" class="form-control">
+													</div>
+												</div>
+
+
+											</div>
+											<script>
+												(function ($) {
+													$(document).ready(function () {
+
+														initPhoneCode({{ wa_row }});
+													});
+												})(jQuery);
+											</script>
+											{% set wa_row = wa_row + 1 %}
+										{% endfor %}
+									</div>
+								</div>
+							</div>
+
+							<div class="tab-pane" id="tab-translation">
+								<br>
+								<ul class="nav nav-tabs" id="language">
+									{% for language in languages %}
+										<li>
+											<a data-toggle="tab" href="#language{{ language.language_id }}"><img
+														src="language/{{ language.code }}/{{ language.code }}.png"
+														title="{{ language.name }}"/>
+												{{ language.name }}</a>
+										</li>
+									{% endfor %}
+								</ul>
+								<div class="tab-content">
+									{% for language in languages %}
+										<div class="tab-pane" id="language{{ language.language_id }}">
+
+											<div class="form-group">
+												<label class="col-sm-3">
+													{{ entry_greeting }}
+													<span class="help">
+														{{ help_greeting }}
+													</span>
+												</label>
+												<div class="col-sm-9">
+													<textarea name="greeting_{{ language.language_id }}"
+															placeholder="{{ entry_message_text }}"
+															class="form-control">{{ _context["greeting_" ~ language.language_id] }}</textarea>
+												</div>
+											</div>
+
+											<div class="form-group">
+												<label class="col-sm-3">
+													{{ entry_call_to_action }}
+													<span class="help">
+														{{ help_call_to_action }}
+													</span>
+												</label>
+												<div class="col-sm-9">
+													<textarea name="call_to_action_{{ language.language_id }}"
+															placeholder="{{ entry_call_to_action }}"
+															class="form-control">{{ _context["call_to_action_" ~ language.language_id] }}</textarea>
+												</div>
+											</div>
+
+											<div class="form-group">
+												<label class="col-sm-3">
+													{{ entry_heading_title }}
+													<span class="help">
+														{{ help_heading_title }}
+													</span>
+												</label>
+												<div class="col-sm-9">
+													<textarea name="heading_title_{{ language.language_id }}"
+															placeholder="{{ entry_heading_title }}"
+															class="form-control">{{ _context["heading_title_" ~ language.language_id] }}</textarea>
+												</div>
+											</div>
+
+											<div class="form-group">
+												<label class="col-sm-3">
+													{{ entry_description }}
+													<span class="help">
+														{{ help_description }}
+													</span>
+												</label>
+												<div class="col-sm-9">
+													<textarea name="description_{{ language.language_id }}"
+															placeholder="{{ entry_description }}"
+															class="form-control">{{ _context["description_" ~ language.language_id] }}</textarea>
+												</div>
+											</div>
+
+											<div class="form-group">
+												<label class="col-sm-3">
+													{{ entry_chat_reply }}
+													<span class="help">
+														{{ help_chat_reply }}
+													</span>
+												</label>
+												<div class="col-sm-9">
+													<textarea name="chat_reply_{{ language.language_id }}"
+															placeholder="{{ entry_chat_reply }}"
+															class="form-control">{{ _context["chat_reply_" ~ language.language_id] }}</textarea>
+												</div>
+											</div>
+
+
+											{# Email message text #}
+											<div class="form-group">
+												<label class="col-sm-3">
+													{{ entry_message_text }}
+													<span class="help">
+														{{ help_message_text }}
+													</span>
+												</label>
+												<div class="col-sm-9">
+													<textarea name="message_text_{{ language.language_id }}"
+															placeholder="{{ entry_message_text }}"
+															class="form-control">{{ _context["message_text_" ~ language.language_id] }}</textarea>
+												</div>
+											</div>
+
+										</div>
+									{% endfor %}
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script src="view/javascript/summernote/summernote.js" type="text/javascript"></script>
+<link href="view/javascript/summernote/summernote.css" rel="stylesheet"/>
+<script src="view/javascript/summernote/summernote-image-attributes.js" type="text/javascript"></script>
+<script src="view/javascript/summernote/opencart.js" type="text/javascript"></script>
+
+<style>
+	.help {
+		color: #888;
+		font-weight: normal;
+		font-size: 11px;
+		display: block;
+		margin-top: 3px;
+		margin-bottom: 10px;
+		font-style: italic;
+	}
+</style>
+
+<script>
+	function link_type(type, wa_row){
+		if (type == 1) {
+			$("#wa-number" + wa_row).show();
+			$("#custom-link" + wa_row).hide();
+		} else {
+			$("#wa-number" + wa_row).hide();
+			$("#custom-link" + wa_row).show();
+		}
+	}
+
+	$(document).ready(function () {
+		$.get("https://hpwebdesign.io/index.php?route=common/extension/version&code={{ extension_code }}&oc=3.0.x.x", function (data, status) {
+			const version = "{{ version }}".replace(/\D/g, '');
+			const latest_version = data.replace(/\D/g, '');
+			if (version < latest_version) {
+				$('.panel.panel-default').parent().prepend(`<div class="alert alert-danger">
+		 <i class="fa fa-exclamation-circle"></i>
+		 {{ text_upgrade_version }}
+		 </div>`);
+			}
+		});
+
+		$(".btn-chat").click(function () {
+			$(this).find("input[name='type']").prop('checked', true);
+			if ($("input[name='type']:checked").val() == '1') {
+				$("#update-percent").show();
+				$("#update-fixed").hide();
+			} else {
+				$("#update-percent").hide();
+				$("#update-fixed").show();
+			}
+		});
+
+		$('#tawkto').hide();
+		$('#fb').hide();
+		var chat_button = $("#chat-button input[name='type']:checked").val();
+		if (chat_button == 'tw') {
+			$('#tawkto').show();
+		}
+		if (chat_button == 'fb') {
+			$('#fb').show();
+		}
+
+		$("#chat-button .btn-chat").on('click', function () {
+			var chat_button = $("#chat-button input[name='type']:checked").val();
+			console.log(chat_button);
+			if (chat_button == 'tw') {
+				$('#tawkto').show();
+			} else {
+				$('#tawkto').hide();
+			}
+			if (chat_button == 'fb') {
+				$('#fb').show();
+			} else {
+				$('#fb').hide();
+			}
+		});
+
+		if ($.fn.checkboxpicker) {
+			$('[data-control=checkbox]').checkboxpicker({onClass: 'btn-info'});
+		}
+		$('.btn-group .btn').addClass('btn-sm');
+
+		$(".resend-text").summernote({
+			height: 100
+		});
+
+		$(".email-text").summernote({
+			height: 100
+		});
+
+
+		$('#language a:first').tab('show');
+
+
+	});
+
+</script>
+<script type="text/javascript">
+	var color_scheme = '{{ color }}';
+
+	if (color_scheme) {
+		$('#color-scheme-button i').css('background-color', color_scheme);
+	}
+
+	jQuery("#color-scheme-button").ColorPicker({
+		color: jQuery('#color-scheme').val(),
+		onShow: function (colpkr) {
+			jQuery(colpkr).fadeIn(500);
+			return false;
+		},
+		onHide: function (colpkr) {
+			jQuery(colpkr).fadeOut(500);
+			return false;
+		},
+		onChange: function (hsb, hex, rgb) {
+			jQuery('.input-group-addon i').css('background-color', '#' + hex);
+			jQuery('#color-scheme').val('#' + hex);
+		}
+	});
+</script>
+
+<style type="text/css">
+	.panel-body {
+		position: relative;
+	}
+
+	h6 {
+		line-height: 1.3em;
+	}
+
+	.panel-body {
+		position: relative;
+	}
+
+	#button-save {
+		margin-right: -9px;
+		margin-left: -9px;
+	}
+
+	.marker-down {
+		width: 0px;
+		height: 0px;
+		border-left: 5px solid transparent;
+		border-right: 5px solid transparent;
+		border-top: 5px solid #2f2f2f;
+		position: absolute;
+		z-index: 999;
+		right: -7px;
+		top: 16px;
+	}
+</style>
+<script
+		type="text/javascript">
+	<!--
+
+	var wa_row = '{{ wa_row }}';
+
+
+	function addAccount() {
+
+		html = '<div class="tab-pane" id="tab-whatsapp' + wa_row + '">';
+		html += '<div class="form-group">';
+		html += '    <label class="col-sm-3 control-label" for="whatsapp-status">';
+		html += '        {{ entry_enable }}';
+		html += '    </label>';
+		html += '    <div class="col-sm-9">';
+		html += '        <input name="whatsapp[' + wa_row + '][status]" type="checkbox" data-control="checkbox" value="1" data-off-label="{{ text_no }}" data-on-label="{{ text_yes }}">';
+		html += '    </div>';
+		html += '</div>';
+		html += `<div class="form-group">
+				   <label class="col-sm-3 control-label" for="whatsapp[${wa_row}][inline_chat_btn]">
+						Inline Chat Button
+						  <span class="help">
+							Display inline chat button in product page
+							</span>
+							</label>
+					<div class="col-sm-9">
+						<input name="whatsapp[${wa_row}][inline_chat_btn]" type="checkbox" data-control="checkbox" value="1" data-off-label="{{ text_no }}" data-on-label="{{ text_yes }}" >
+					</div>
+				</div>`;
+		html += '<div class="form-group">';
+		html += '<label class="col-sm-3 control-label">{{ entry_online_status }} <span class="help">{{ help_online_status }}</span></label>';
+		html += '<div class="col-sm-9">';
+		html += '<div class="btn-group btn-group-toggle" data-toggle="buttons">';
+		html += '<label class="btn btn-success active">';
+		html += '<input type="radio" name="whatsapp[' + wa_row + '][online_status]" id="option1" autocomplete="off" checked value="1"> Online </label>';
+		html += '<label class="btn btn-success">';
+		html += '<input type="radio" name="whatsapp[' + wa_row + '][online_status]" id="option1" autocomplete="off" value="2"> Away </label>';
+		html += '<label class="btn btn-success">';
+		html += '<input type="radio" name="whatsapp[' + wa_row + '][online_status]" id="option1" autocomplete="off" value="3"> Offline </label>';
+		html += '</div></div></div>';
+		html += '<div class="form-group">                                                <label class="col-sm-3 control-label" for="input-whatsapp' + wa_row + '">{{ entry_online_time }}</label>                                                <div class="col-sm-9">                                                <label class="col-sm-3 control-label" for="input-whatsapp' + wa_row + '">{{ entry_from }}</label>                                                <div class="col-sm-2">                                                    <select name="whatsapp[' + wa_row + '][online_time_from]" class="form-control">';
+		{% for i in range(1, 24) %}
+		html += '<option value="{{ i }}">{% if i < 10 %} 0{{ i }}:00{% else %} {{ i }}:00 {% endif %}';
+		html += '</option>';
+		{% endfor %}
+		html += '</select></div>';
+		html += '<label class="col-sm-3 control-label" for="input-whatsapp' + wa_row + '">{{ entry_to }}</label><div class="col-sm-2">';
+		html += '<select name="whatsapp[' + wa_row + '][online_time_to]" class="form-control">';
+		{% for i in range(1,24) %}
+		html += '<option value="{{ i }}">{% if i < 10 %} 0{{ i }}:00{% else %} {{ i }}:00 {% endif %}';
+		html += '</option>';
+		{% endfor %}
+		html += '</select></div></div></div>';
+		html += '<div class="form-group"><label class="col-sm-3 control-label" for="input-whatsapp' + wa_row + '">{{ entry_away_time }}</label>';
+		html += '<div class="col-sm-9"><label class="col-sm-3 control-label" for="input-whatsapp' + wa_row + '">{{ entry_from }}</label><div class="col-sm-2">';
+		html += '<select name="whatsapp[' + wa_row + '][away_time_from]" class="form-control">';
+		{% for i in range(1, 24) %}
+		html += '<option value="{{ i }}">{% if i < 10 %} 0{{ i }}:00{% else %} {{ i }}:00 {% endif %}';
+		html += '</option>';
+		{% endfor %}
+		html += '</select></div>';
+		html += '<label class="col-sm-3 control-label" for="input-whatsapp' + wa_row + '">{{ entry_to }}</label><div class="col-sm-2">';
+		html += '<select name="whatsapp[' + wa_row + '][away_time_to]" class="form-control">';
+		{% for i in range(1,24) %}
+		html += '<option value="{{ i }}">{% if i < 10 %} 0{{ i }}:00{% else %} {{ i }}:00 {% endif %}';
+		html += '</option>';
+		{% endfor %}
+		html += '</select></div></div></div>';
+		html += '<div class="form-group"><label class="col-sm-3 control-label" for="input-whatsapp' + wa_row + '">{{ entry_offline_time }}</label>';
+		html += '<div class="col-sm-9"><code>{{ text_offline_time }}</code>';
+		html += '</div></div>';
+		html += '  <div class="form-group">';
+		html += '    <label class="col-sm-3 control-label" for="input-whatsapp-account-name' + wa_row + '">{{ entry_whatsapp_name }}</label>';
+		html += '    <div class="col-sm-3"><input type="text" name="whatsapp[' + wa_row + '][name]" value="" placeholder="{{ entry_whatsapp_name }}" id="input-whatsapp-account-name' + wa_row + '" class="form-control" /></div>';
+		html += '  </div>';
+
+		html += '  <div class="form-group">';
+		html += '    <label class="col-sm-3 control-label" for="input-whatsapp-account-position' + wa_row + '">{{ entry_whatsapp_position }}</label>';
+		html += '    <div class="col-sm-3"><input type="text" name="whatsapp[' + wa_row + '][position]" value="" placeholder="{{ entry_whatsapp_position }}" id="input-whatsapp-account-position' + wa_row + '" class="form-control" /></div>';
+		html += '  </div>';
+
+		// html += '  <div class="form-group">';
+		// html += '    <label class="col-sm-3 control-label" for="input-whatsapp-account-no-wa' + wa_row + '">{{ entry_no_wa }}</label>';
+		// html += '<div class="col-sm-9"><div class="col-sm-1" style="padding: 0;"><span class="marker-down"></span> ';
+		// html += '<select data-live-search="true" data-selected="62" name="whatsapp[' + wa_row + '][wa_country]" class="country_code' + wa_row + '"></select>';
+		// html += '</div>';
+		// html += '<div class="col-sm-5"><input value="" name="whatsapp[' + wa_row + '][wa_number]" type="text" class="form-control" aria-describedby="basic-addon1"></div>';
+		// html += '</div></div>';
+
+		html += `<div class="form-group"><label class="col-sm-3 control-label" for="input-whatsapp1">{{ entry_link_type }}<span class="help">{{ help_link_type }}</span></label> <div class="col-sm-9"> <div class="btn-group btn-group-toggle link-type" data-toggle="buttons" data-wa-row="${wa_row}"> <label class="btn btn-success active btn-sm" onclick="link_type(1, ${wa_row})"> <input type="radio" name="whatsapp[${wa_row}][link_type]" {% if whatsapp.link_type==1 %} checked="checked" {% endif %} value="1"> {{ text_whatsapp_button }}</label> <label class="btn btn-success btn-sm" onclick="link_type(2, ${wa_row})"> <input type="radio" name="whatsapp[${wa_row}][link_type]" value="2"> {{ text_custom_link }}</label></div> </div></div><input type="hidden" name="address[${wa_row}][no_wa]" value="{{ whatsapp.no_wa }}" /><input type="hidden" name="address[${wa_row}][wa_country]" value="{{ whatsapp.wa_country }}" /><div class="form-group" id="wa-number{{wa_row}}"><label class="col-sm-3 control-label">{{ entry_no_wa }}</label> <div class="col-sm-9"> <div class="col-sm-1" style="padding: 0;"><span class="marker-down"></span><select data-live-search="true" data-selected="{{ whatsapp.wa_country }}" name="whatsapp[${wa_row}][wa_country]" class="country_code${wa_row}"></select></div> <div class="col-sm-5"><input value="{{ whatsapp.wa_number }}" name="whatsapp[${wa_row}][wa_number]" type="text" class="form-control" aria-describedby="basic-addon1"></div> </div></div><div class="form-group" id="custom-link{{wa_row}}"><label class="col-sm-3 control-label">{{ text_custom_link }}</label> <div class="col-sm-6"><input value="{{ whatsapp.custom_link }}" name="whatsapp[${wa_row}][custom_link]" type="text" class="form-control"></div></div>`;
+
+		html += '<div class="form-group">';
+		html += '    <label class="col-sm-3 control-label">';
+		html += '        {{ entry_whatsapp_picture }}';
+		html += '    </label>';
+		html += '    <div class="col-sm-9">';
+		html += '        <a class="img-thumbnail" data-toggle="image" href="" id="thumb-icon' + wa_row + '"><img src="{{ wa_logo_placeholder }}" alt="" title="" data-placeholder="{{ wa_logo_placeholder }}"/></a>';
+		html += '        <input id="thumb-input' + wa_row + '" type="hidden" name="whatsapp[' + wa_row + '][profile_picture]" value="{{ wa_logo_default }}"/>';
+		html += '    </div>';
+		html += '</div>';
+		html += `
+		<div class="form-group">
+				<label class="col-sm-3 control-label" for="input-sort-order">{{entry_whatsapp_sort_order}}</label>
+				<div class="col-sm-3">
+				   <input type="text" name="whatsapp[${wa_row}][sort_order]" value="0" placeholder="{{entry_whatsapp_sort_order}}" id="input-sort-order" class="form-control">
+				</div>
+		</div>
+		`;
+		html += '  </div>';
+
+		$('#account-add').before('<li><a href="#tab-whatsapp' + wa_row + '" data-toggle="tab"><i class="fa fa-minus-circle" onclick="$(\'#address a:first\').tab(\'show\'); $(\'a[href=\\\'#tab-whatsapp' + wa_row + '\\\']\').parent().remove(); $(\'#tab-whatsapp' + wa_row + '\').remove();"></i> {{ text_whatsapp_account }} ' + wa_row + '</a></li>');
+
+		$('#whatsapp_list').append(html);
+
+		$("#custom-link" + wa_row).hide();
+
+
+		$('#address a[href=\'#tab-whatsapp' + wa_row + '\']').tab('show');
+
+		$('#tab-whatsapp' + wa_row + ' .form-group[data-sort]').detach().each(function () {
+			if ($(this).attr('data-sort') >= 0 && $(this).attr('data-sort') <= $('#tab-whatsapp' + wa_row + ' .form-group').length) {
+				$('#tab-whatsapp' + wa_row + ' .form-group').eq($(this).attr('data-sort')).before(this);
+			}
+
+			if ($(this).attr('data-sort') > $('#tab-whatsapp' + wa_row + ' .form-group').length) {
+				$('#tab-whatsapp' + wa_row + ' .form-group:last').after(this);
+			}
+
+			if ($(this).attr('data-sort') < -$('#tab-whatsapp' + wa_row + ' .form-group').length) {
+				$('#tab-whatsapp' + wa_row + ' .form-group:first').before(this);
+			}
+		});
+
+		(function ($) {
+			$(document).ready(function () {
+
+				initPhoneCode(wa_row);
+			});
+		})(jQuery);
+
+
+		wa_row++;
+		if ($.fn.checkboxpicker) {
+			$('[data-control=checkbox]').checkboxpicker({onClass: 'btn-info'});
+		}
+
+		$('.btn-group .btn').addClass('btn-sm');
+	}
+
+	function initPhoneCode(id) {
+		fetch("view/javascript/selectpicker/js/countryPhone.json").then(res => res.json()).then(json => {
+			$(".country_code" + id).each(function () {
+				let defaultValue = $(this).attr('data-selected');
+				let options = [];
+				json.forEach(country => {
+					if (defaultValue == country.phone) {
+						options.push(
+							"<option selected title='+" + country.phone + "' value='" + country.phone + "' >" + country.name + " +" + country.phone + "</option>"
+						);
+					} else {
+						options.push(
+							"<option title='+" + country.phone + "' value='" + country.phone + "' >" + country.name + " +" + country.phone + "</option>"
+						);
+					}
+				})
+				$(this).html(options);
+				$(this).selectpicker();
+			})
+		})
+
+	}
+
+	//-->
+</script>
+{{ footer }}

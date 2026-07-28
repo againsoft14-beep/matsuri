@@ -1,0 +1,133 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <h1>Lot Orders & Profit Analysis</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  
+  <div class="container-fluid">
+    {# Summary Cards #}
+    {% set total_sell = 0 %}
+    {% set total_cost = 0 %}
+    {% set total_qty = 0 %}
+    
+    {% for order in orders %}
+      {% set total_sell = total_sell + order.product_total_price %}
+      {% set total_cost = total_cost + ((order.purchase_price + order.additional_cost) * order.sold_qty) %}
+      {% set total_qty = total_qty + order.sold_qty %}
+    {% endfor %}
+    
+    {% set total_profit = total_sell - total_cost %}
+
+    <div class="row">
+      <div class="col-md-3">
+        <div class="panel panel-default">
+          <div class="panel-body bg-primary text-center">
+            <h4>Total Sold Qty</h4>
+            <h2 style="margin:0">{{ total_qty }}</h2>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="panel panel-default">
+          <div class="panel-body bg-info text-center">
+            <h4>Total Sell</h4>
+            <h2 style="margin:0">{{ total_sell|number_format(2) }}</h2>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="panel panel-default">
+          <div class="panel-body bg-warning text-center">
+            <h4>Total Cost (Purchase + Addl.)</h4>
+            <h2 style="margin:0">{{ total_cost|number_format(2) }}</h2>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="panel panel-default">
+          <div class="panel-body {{ total_profit >= 0 ? 'bg-success' : 'bg-danger' }} text-center">
+            <h4>Net Profit</h4>
+            <h2 style="margin:0">{{ total_profit|number_format(2) }}</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-list"></i> Order Details for this Lot</h3>
+      </div>
+      <div class="panel-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr style="background: #f9f9f9;">
+                <td class="text-center">Order ID</td>
+                <td class="text-left">Customer</td>
+                <td class="text-left">Product / SKU</td>
+                <td class="text-center">Qty</td>
+                <td class="text-right">Unit Buy Cost</td>
+                <td class="text-right">Unit Sale Price</td>
+                <td class="text-right">Total Sell</td>
+                <td class="text-right">Profit</td>
+                <td class="text-left">Status</td>
+                <td class="text-left">Date</td>
+              </tr>
+            </thead>
+            <tbody>
+              {% if orders %}
+                {% for order in orders %}
+                  {# Per Order Profit Calculation #}
+                  {% set unit_cost = order.purchase_price + order.additional_cost %}
+                  {% set order_cost = unit_cost * order.sold_qty %}
+                  {% set order_profit = order.product_total_price - order_cost %}
+                  
+                  <tr>
+                    <td class="text-center">#{{ order.order_id }}</td>
+                    <td class="text-left">
+                      {{ order.customer }}<br>
+                      <small class="text-muted">{{ order.telephone }}</small>
+                    </td>
+                    <td class="text-left">
+                      {{ order.product_name }}<br>
+                      <span class="label label-default">{{ order.sku }}</span>
+                    </td>
+                    <td class="text-center">{{ order.sold_qty }}</td>
+                    <td class="text-right">{{ unit_cost|number_format(2) }}</td>
+                    <td class="text-right">{{ (order.product_total_price / order.sold_qty)|number_format(2) }}</td>
+                    <td class="text-right">{{ order.product_total_price|number_format(2) }}</td>
+                    <td class="text-right" style="font-weight:bold; color: {{ order_profit >= 0 ? 'green' : 'red' }};">
+                      {{ order_profit|number_format(2) }}
+                    </td>
+                    <td class="text-left">
+                        {% if order.status == 'Delivered' %}
+                            <span class="label label-success">{{ order.status }}</span>
+                        {% elseif order.status == 'Pending' %}
+                            <span class="label label-warning">{{ order.status }}</span>
+                        {% else %}
+                            <span class="label label-info">{{ order.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-left">{{ order.date_added|date('d-M-Y H:i') }}</td>
+                  </tr>
+                {% endfor %}
+              {% else %}
+                <tr>
+                  <td class="text-center" colspan="10">No orders found for this lot!</td>
+                </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{ footer }}

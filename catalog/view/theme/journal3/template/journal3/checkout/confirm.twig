@@ -1,0 +1,36 @@
+<div class="checkout-section confirm-section">
+  <div class="section-body">
+    {% if newsletter %}
+      <div class="checkbox">
+        <label><input v-model="newsletter" type="checkbox"/>{{ newsletter }}</label>
+      </div>
+    {% endif %}
+
+    {% if privacy %}
+      <div class="checkbox d-none" style="display: none !important;">
+        <label><input v-model="privacy" type="checkbox" v-init="privacy = true"/>{{ privacy }}</label>
+        <span class="text-danger" v-if="error && error.privacy" v-html="error.privacy"></span>
+      </div>
+    {% endif %}
+
+    {% if agree %}
+      <div class="checkbox d-none" style="display: none !important;"> 
+        <label><input v-model="agree" type="checkbox" v-init="agree = true"/>{{ agree }}</label>
+        <span class="text-danger" v-if="error && error.agree" v-html="error.agree"></span>
+      </div>
+    {% endif %}
+
+    {% if captcha %}
+      <div class="captcha" v-bind:class="{ 'has-error': error && error.captcha }">
+        {{ captcha }}
+        <span class="text-danger" v-if="error && error.captcha" v-html="error.captcha"></span>
+      </div>
+    {% endif %}
+
+    <div class="buttons confirm-buttons">
+      <div class="pull-right">
+        <button type="button" v-on:click="save(true)" data-loading-text="<span>{{ j3.settings.get('confirmOrderLoadingText') ? j3.settings.get('confirmOrderLoadingText') : j3.settings.get('confirmOrderLanguage') }}</span>" class="btn btn-primary" id="quick-checkout-button-confirm"><span>{{ j3.settings.get('confirmOrderLanguage') }}</span></button>
+      </div>
+    </div>
+  </div>
+</div>

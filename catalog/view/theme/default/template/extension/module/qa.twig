@@ -1,0 +1,174 @@
+<style>
+.Question-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+}
+.text-entry{
+ display:flex;   
+}
+@media (max-width: 469px) {
+    .text-entry {
+        flex-direction: column;
+    }
+    .Question-header{
+        align-items: baseline;
+    }
+}
+
+.ask-question-form{
+ background: #eee;
+    padding: 15px;
+    border-radius: 10px;
+}
+  
+</style>
+  
+  
+    <div class="Question-header">
+        <div>    
+            <h2 id="qa-title">Questions</h2>
+            <span>Have question about this product? Get specific details about this product from expert.</span>
+        </div>
+        <div>
+            <button id="open-form-popup" class="btn btn-primary">Ask a question</button>
+        </div>
+    </div>
+
+
+{% if qas %}
+{% for qa in qas %}
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<i class="fa fa-question-circle q-i"></i>
+		<span class="q-qt">{{ qa.question }}</span>
+		<span class="q-details">{% if (module_qa_display_question_author and qa.q_author) or module_qa_display_question_date %}({% endif %}
+	{% if module_qa_display_question_author and qa.q_author %}<span class="q-qa">{{ qa.q_author }}</span>{% if module_qa_display_question_date %}, {% endif %}{% endif %}
+	{% if module_qa_display_question_date %}<span class="q-qd">{{ qa.date_asked }}</span>{% endif %}
+	{% if module_qa_display_question_author or module_qa_display_question_date %}){% endif %}</span>
+	</div>
+	<div class="panel-body q-p">
+		{{ qa.answer ? qa.answer : '<em>' ~ text_no_answer ~ '</em>' }}
+		<span class="q-details">{% if (module_qa_display_answer_author or module_qa_display_answer_date) and qa.a_author %}({% endif %}
+	{% if module_qa_display_answer_author and qa.a_author %}<span class="q-aa">{{ qa.a_author }}</span>{% if module_qa_display_answer_date %}, {% endif %}{% endif %}
+	{% if module_qa_display_answer_date and qa.a_author %}<span class="q-ad">{{ qa.date_answered }}</span>{% endif %}
+	{% if (module_qa_display_answer_author or module_qa_display_answer_date) and qa.a_author %}){% endif %}</span>
+	</div>
+</div>
+{% endfor %}
+<div class="text-right">{{ pagination }}</div>
+{% else %}
+<p>{{ text_no_questions }}</p>
+{% endif %}
+
+
+
+
+
+<div id="form-popup-container" class="hidden">
+    <div class="tab-pane" id="tab-qa">
+       {#<div class="tab-pane" id="tab-qa"><style scoped type="text/css">.noclear{clear:none !important}</style>#}
+				<form class="form-horizontal ask-question-form" id="q-form">
+					{% if module_qa_display_questions %}
+					<div id="qa">{{ qas }}</div>
+					{% endif %}
+					<h2 id="qa-title">{{ text_ask }}</h2>
+					{% if module_qa_form_display_name %}
+					
+				<div class="text-entry">	
+					<div class="col-sm-12 col-md-6 col-lg-4 noclear">
+						<div class="form-group q-form{{ module_qa_form_require_name ? ' required' : '' }}">
+							<label class="control-label" for="input-q-name">{{ entry_name }}</label>
+							<input type="text" name="q_name" value="{{ q_name }}" id="input-q-name" class="form-control" />
+						</div>
+					</div>
+					{% endif %}
+					{% if module_qa_form_display_email %}
+					<div class="col-sm-12 col-md-6 col-lg-4 noclear">
+						<div class="form-group q-form{{ module_qa_form_require_email ? ' required' : '' }}">
+							<label class="control-label" for="input-q-email">{{ entry_email }}</label>
+							<input type="email" name="q_email" value="{{ q_email }}" id="input-q-email" class="form-control" />
+						</div>
+					</div>
+					{% endif %}
+					{% if module_qa_form_display_phone %}
+					<div class="col-sm-12 col-md-6 col-lg-4 noclear">
+						<div class="form-group q-form{{ module_qa_form_require_phone ? ' required' : '' }}">
+							<label class="control-label" for="input-q-phone">{{ entry_phone }}</label>
+							<input type="tel" name="q_phone" value="" id="input-q-phone" class="form-control" />
+						</div>
+					</div>
+					{% endif %}
+					{% if module_qa_form_display_custom_field %}
+					<div class="col-sm-12 col-md-6 col-lg-4 noclear">
+						<div class="form-group q-form{{ module_qa_form_require_custom_field ? ' required' : '' }}">
+							<label class="control-label" for="input-q-custom">{{ entry_custom }}</label>
+							<input type="text" name="q_custom" value="" id="input-q-custom" class="form-control" />
+						</div>
+					</div>
+					{% endif %}
+				</div>	
+					
+					
+					<div class="form-group q-form required">
+						<div class="col-sm-12">
+							<label class="control-label" for="input-q-question">{{ entry_question }}</label>
+							<textarea name="q_question" rows="5" id="input-q-question" class="form-control"></textarea>
+							<div class="help-block">{{ text_note }}</div>
+						</div>
+					</div>
+					{% if module_qa_form_display_captcha %}
+					{{ qa_captcha }}
+					{% endif %}
+					<div class="buttons clearfix">
+						<div class="pull-left">
+							<button type="button" id="button-qa" data-loading-text="{{ text_loading }}" class="btn btn-primary">{{ button_continue }}</button>
+						</div>
+					</div>
+				</form>
+			{#</div>#}
+    </div>
+</div>
+
+   
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const openButton = document.getElementById("open-form-popup");
+    const popupContainer = document.getElementById("form-popup-container");
+
+    openButton.addEventListener("click", function() {
+        if (popupContainer.classList.contains("hidden")) {
+            popupContainer.classList.remove("hidden");
+        } else {
+            popupContainer.classList.add("hidden");
+        }
+    });
+
+    // Close the popup when clicked outside the form or on a close button
+    popupContainer.addEventListener("click", function(event) {
+        if (event.target === popupContainer) {
+            popupContainer.classList.add("hidden");
+        }
+    });
+});
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript"><!--
+$("body").on("click","#qa-ask",function(a){a.preventDefault(),$("a[href='#tab-qa']").trigger("click"),$("html,body").animate({scrollTop:$("#qa-title").offset().top},1300)}).on("click","#qa .pagination a",function(){var a=this.href;return $("#qa").slideUp("slow",function(){$("#qa").load(a,function(){$("#qa").slideDown("slow")})}),!1});{% if preload != 1 %}$('#qa').load('index.php?route=extension/module/qa/question&product_id={{ product_id }}');{% endif %}$("#button-qa").on("click",function(){$.ajax({type:"POST",url:"index.php?route=extension/module/qa/ask&product_id={{ product_id }}",dataType:"json",data:$("#q-form :input").serialize(),beforeSend:function(){$("#button-qa").button("loading")},complete:function(){$("#button-qa").button("reset")},success:function(a){$(".alert-success, .alert-danger").remove(),a.error&&$("#qa-title").before('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> '+a.error+"</div>"),a.success&&($("#qa-title").before('<div class="alert alert-success"><i class="fa fa-check-circle"></i> '+a.success+"</div>"),$("textarea[name='q_question']").val(""))},error:function(a){$("#qa-title").before('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> '+a.statusText+"</div>")}})});
+
+//--></script>

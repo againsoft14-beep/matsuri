@@ -1,0 +1,63 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+          <a href="{{ add }}" data-toggle="tooltip" title="{{ text_add }}" class="btn btn-primary"><i class="fa fa-plus"></i></a>
+          <a href="{{ export }}" data-toggle="tooltip" title="Export" class="btn btn-success"><i class="fa fa-file-excel-o"></i> </a>
+          <button type="button" data-toggle="tooltip" title="{{ button_delete }}" class="btn btn-danger" onclick="confirm('{{ text_confirm }}') ? $('#form-category').submit() : false;"><i class="fa fa-trash-o"></i></button>
+        </div>
+      <h1>Expense Categories</h1>
+      {{breadcrumb}}
+    </div>
+  </div>
+
+  <div class="container-fluid">
+{{ messages }}
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_list }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ delete }}" method="post" enctype="multipart/form-data" id="form-category">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr>
+                  <td style="width: 1px;" class="text-center">
+                    <input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" />
+                  </td>
+                  
+                  <td class="text-left">
+                    <a href="{{ sort_name }}" class="{% if sort == 'name' %}{{ order|lower }}{% endif %}">{{ column_name }}</a>
+                  </td>
+                  
+                  <td class="text-right">{{ column_action }}</td>
+                </tr>
+              </thead>
+              <tbody>
+                {% if categories %}
+                  {% for c in categories %}
+                  <tr>
+                    <td class="text-center"><input type="checkbox" name="selected[]" value="{{ c.category_id }}" /></td>
+                    <td class="text-left">{{ c.name }}</td>
+                    <td class="text-right">
+                      <a href="index.php?route=extension/module/inventory_module/expense/editCategory&user_token={{ user_token }}&category_id={{ c.category_id }}" data-toggle="tooltip" title="Edit" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                {% else %}
+                  <tr>
+                    <td class="text-center" colspan="3">{{ text_no_results }}</td>
+                  </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{{ footer }}

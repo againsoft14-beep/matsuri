@@ -1,0 +1,303 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+          <a href="{{ export }}" data-toggle="tooltip" title="Export to CSV" class="btn btn-success"><i class="fa fa-file-excel-o"></i></a>
+          {#<button type="button" form="form-product" formaction="{{ delete }}" data-toggle="tooltip" title="{{ button_delete }}" class="btn btn-danger" onclick="confirm('{{ text_confirm }}') ? $('#form-product').submit() : false;"><i class="fa fa-trash-o"></i></button>#}
+        </div>
+      
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">{% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    {% if success %}
+    <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-sm-3">
+                <div class="form-group">
+                  <label class="control-label" for="input-name">{{ column_name }}</label>
+                  <input type="text" name="filter_name" value="{{ filter_name }}" placeholder="{{ column_name }}" id="input-name" class="form-control" />
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="form-group">
+                  <label class="control-label" for="input-sku">{{ column_sku }}</label>
+                  <input type="text" name="filter_sku" value="{{ filter_sku }}" placeholder="{{ column_sku }}" id="input-sku" class="form-control" />
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <div class="form-group" style="margin-top: 23px;">
+                  <button type="button" id="button-filter" class="btn btn-primary" data-toggle="tooltip" title="{{ button_filter }}"><i class="fa fa-filter"></i> {{ button_filter }}</button>
+                  <a href="index.php?route=extension/module/inventory_module/update&user_token={{ user_token }}" class="btn btn-default" data-toggle="tooltip" title="{{ button_clear }}"><i class="fa fa-refresh"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-12  col-sm-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-list"></i> Inventroy Update List</h3>
+          </div>
+          <div class="panel-body">
+            <form action="{{ delete }}" method="post" enctype="multipart/form-data" id="form-product">
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                  <thead>
+                    <tr>
+                        <td class="text-center">{{ column_image }}</td>
+                        
+                        <td class="text-left">
+                          <a href="{{ sort_name }}" class="{% if sort == 'pd.name' %}{{ order|lower }}{% endif %}">{{ column_name }}</a>
+                        </td>
+                        
+                        <td class="text-left">
+                          <a href="{{ sort_sku }}" class="{% if sort == 'p.sku' %}{{ order|lower }}{% endif %}">{{ column_sku }}</a>
+                        </td>
+                        
+                        <td class="text-right">
+                          <a href="{{ sort_price }}" class="{% if sort == 'p.price' %}{{ order|lower }}{% endif %}">{{ column_price }}</a>
+                        </td>
+                        
+                        <td class="text-right">
+                          <a href="{{ sort_quantity }}" class="{% if sort == 'p.quantity' %}{{ order|lower }}{% endif %}">{{ column_quantity }}</a>
+                        </td>
+                        
+                        <td class="text-left">{{ column_lots_quantity }}</td>
+                        
+                    </tr>
+                  </thead>
+                  <tbody>
+                      
+                  
+                  {% if products %}
+                  {% for product in products %}
+                  <tr>
+                    
+                    <td class="text-center">{% if product.image %} <img src="{{ product.image }}" alt="{{ product.name }}" class="img-thumbnail" /> {% else %} <span class="img-thumbnail list"><i class="fa fa-camera fa-2x"></i></span> {% endif %}</td>
+                    <td class="text-left">{{ product.name }}</td>
+                    <td class="text-left">{{ product.sku }}</td>
+                    <td class="text-right">{% if product.special %} <span style="text-decoration: line-through;">{{ product.price }}</span><br/>
+                      <div class="text-danger">{{ product.special }}</div>
+                      {% else %}
+                      {{ product.price }}
+                      {% endif %}</td>
+                    <td class="text-right">{% if product.quantity <= 0 %} <span class="label label-warning">{{ product.quantity }}</span> {% elseif product.quantity <= 5 %} <span class="label label-danger">{{ product.quantity }}</span> {% else %} <span class="label label-success">{{ product.quantity }}</span> {% endif %}</td>
+                
+			        <td>
+                        {% if product.lots %}
+                            <table class="table table-bordered table-mini" style="margin-bottom: 0; font-size: 11px;">
+                              <thead>
+                                <tr style="background: #f9f9f9;">
+                                  <th>Lot No</th>
+                                  <th>Sale Price</th>
+                                  <th>Qty</th>
+                                  <th>Action</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% for key, lot in product.lots %}
+                                  <tr>
+                                    <td><a href="{{ lot.view }}">{{ lot.lot_number }}</a></td>
+                                    <td><b>{{ lot.sale_price }}</b></td>
+                                    <td>
+                                      {{ lot.current_quantity }}
+                                    </td>
+                                    <td>
+                                      {% if key == 0 and lot.is_merge_lot_quantity_to_main == 0 %}
+                                        <button type="button" 
+                                                class="btn btn-warning btn-xs btn-merge-stock" 
+                                                data-lot-id="{{ lot.lot_id }}" 
+                                                data-product-id="{{ product.product_id }}" 
+                                                data-qty="{{ lot.current_quantity }}"
+                                                title="Merge to main inventory">
+                                          <i class="fa fa-level-up"></i> Merge
+                                        </button>
+                                      {% elseif lot.is_merge_lot_quantity_to_main == 1 %}
+                                        <span class="text-success" style="font-weight: bold;">
+                                          <i class="fa fa-check-circle"></i> Merged
+                                        </span>
+                                      {% endif %}
+                                    </td>
+                                  </tr>
+                                {% endfor %}
+                              </tbody>
+                            </table>
+                          {% else %}
+                            <span class="text-danger">No active lots</span>
+                          {% endif %}
+			        </td>
+
+                  </tr>
+                  {% endfor %}
+                  {% else %}
+                  <tr>
+                    <td class="text-center" colspan="10">{{ text_no_results }}</td>
+                  </tr>
+                  {% endif %}
+                    </tbody>
+                  
+                </table>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-sm-6 text-left">{{ pagination }}</div>
+              <div class="col-sm-6 text-right">{{ results }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+  
+  <script type="text/javascript">
+    $('#button-filter').on('click', function() {
+    	var url = '';
+    	var filter_name = $('input[name=\'filter_name\']').val();
+    	var filter_sku = $('input[name=\'filter_sku\']').val();
+    	var filter_price = $('input[name=\'filter_price\']').val();
+    	var filter_quantity = $('input[name=\'filter_quantity\']').val();
+    	var filter_status = $('select[name=\'filter_status\']').val();
+    	
+    	if (filter_name) {
+    		url += '&filter_name=' + encodeURIComponent(filter_name);
+    	}
+    	
+    	if (filter_sku) {
+    		url += '&filter_sku=' + encodeURIComponent(filter_sku);
+    	}
+    
+    	if (filter_price) {
+    		url += '&filter_price=' + encodeURIComponent(filter_price);
+    	}
+    
+    	if (filter_quantity) {
+    		url += '&filter_quantity=' + encodeURIComponent(filter_quantity);
+    	}
+    
+    	if (filter_status !== '') {
+    		url += '&filter_status=' + encodeURIComponent(filter_status);
+    	}
+    
+    	location = 'index.php?route=catalog/product&user_token={{ user_token }}' + url;
+    });
+</script> 
+  <script type="text/javascript"><!--
+// IE and Edge fix!
+$('button[form=\'form-product\']').on('click', function(e) {
+	$('#form-product').attr('action', $(this).attr('formaction'));
+});
+  
+
+//--></script></div>
+<style>.alert.alert-info {padding: 1px 5px;margin-bottom: 0;font-size: 10px;display: block;}</style>
+
+<script type="text/javascript">
+$(document).on('click', '.btn-merge-stock', function() {
+    var $btn = $(this);
+    var lot_id = $btn.data('lot-id');
+    var product_id = $btn.data('product-id');
+    var qty = $btn.data('qty');
+
+    if (confirm("Merge to main inventory")) {
+        $.ajax({
+            url: 'index.php?route=extension/module/inventory_module/update/mergeLotStock&user_token={{ user_token }}',
+            type: 'post',
+            data: { 
+                lot_id: lot_id, 
+                product_id: product_id, 
+                quantity: qty 
+            },
+            dataType: 'json',
+            beforeSend: function() {
+                $btn.find('i').removeClass('fa-level-up').addClass('fa-spinner fa-spin');
+                $btn.prop('disabled', true);
+                // Show loading on the row
+                $btn.closest('tr').css('opacity', '0.5');
+            },
+            success: function(json) {
+                if (json['success']) {
+                    // Show success notification
+                    var successHtml = '<div class="alert alert-success alert-dismissible fade in" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">' +
+                        '<i class="fa fa-check-circle"></i> ' + json['success'] +
+                        '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                        '</div>';
+                    $('body').append(successHtml);
+                    
+                    // Reload the page with cache busting
+                    var url = window.location.href;
+                    var separator = url.indexOf('?') > -1 ? '&' : '?';
+                    window.location.href = url + separator + '_=' + new Date().getTime();
+                } else if (json['error']) {
+                    $btn.closest('tr').css('opacity', '1');
+                    alert(json['error']);
+                    $btn.prop('disabled', false);
+                    $btn.find('i').removeClass('fa-spinner fa-spin').addClass('fa-level-up');
+                } else {
+                    $btn.closest('tr').css('opacity', '1');
+                    alert("{{ text_error_merge|escape('js') }}");
+                    $btn.prop('disabled', false);
+                    $btn.find('i').removeClass('fa-spinner fa-spin').addClass('fa-level-up');
+                }
+            },
+            error: function(xhr, status, error) {
+                $btn.closest('tr').css('opacity', '1');
+                alert("{{ text_ajax_error|escape('js') }}: " + error);
+                $btn.prop('disabled', false);
+                $btn.find('i').removeClass('fa-spinner fa-spin').addClass('fa-level-up');
+            }
+        });
+    }
+});
+</script>
+
+<script>
+    $('#button-filter').on('click', function() {
+        var url = '';
+        
+        var filter_name = $('input[name=\'filter_name\']').val();
+        if (filter_name) {
+            url += '&filter_name=' + encodeURIComponent(filter_name);
+        }
+        
+        var filter_sku = $('input[name=\'filter_sku\']').val();
+        if (filter_sku) {
+            url += '&filter_sku=' + encodeURIComponent(filter_sku);
+        }
+    
+        // Apnar controller route-ti ekhane din
+        location = 'index.php?route=extension/module/inventory_module/update&user_token={{ user_token }}' + url;
+    });
+    
+    // Input box-e Enter chaple jeno search hoy
+    $('input[name=\'filter_name\'], input[name=\'filter_sku\']').on('keydown', function(e) {
+        if (e.keyCode == 13) {
+            $('#button-filter').trigger('click');
+        }
+    });
+</script>
+{{ footer }} 

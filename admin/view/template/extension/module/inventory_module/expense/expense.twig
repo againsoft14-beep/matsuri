@@ -1,0 +1,210 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+          <a href="{{ category_list }}" data-toggle="tooltip" title="{{ text_category_list }}" class="btn btn-default"><i class="fa fa-users"></i> {{ text_category_list }}</a>
+          <a href="{{ add }}" data-toggle="tooltip" title="{{ text_add }}" class="btn btn-primary"><i class="fa fa-plus"></i></a>
+          <a href="{{ export }}" data-toggle="tooltip" title="Export" class="btn btn-success"><i class="fa fa-file-excel-o"></i></a>
+          <button type="button" data-toggle="tooltip" title="{{ button_delete }}" class="btn btn-danger" onclick="confirm('{{ text_confirm }}') ? $('#form-expense').submit() : false;"><i class="fa fa-trash-o"></i></button>
+        </div>
+      <h1>{{ heading_title }}</h1>
+      {{ breadcrumb }}
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    {{ messages }}
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-filter"></i> {{ text_filter }}</h3>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label class="control-label" for="input-title">{{ entry_title }}</label>
+              <input type="text" name="filter_title" value="{{ filter_title }}" placeholder="{{ entry_title }}" id="input-title" class="form-control" />
+            </div>
+          </div>
+    
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label class="control-label" for="input-category">{{ entry_category }}</label>
+              <select name="filter_category_id" id="input-category" class="form-control">
+                <option value="">--Select Category--</option>
+                {% for category in categories %}
+                <option value="{{ category.category_id }}" {{ filter_category_id == category.category_id ? 'selected' : '' }}>{{ category.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+    
+         <div class="col-sm-3">
+          <div class="form-group">
+            <label class="control-label" for="input-date-range">Date Range</label>
+            <select name="filter_date_range" id="input-date-range" class="form-control">
+              <option value="">--Select Range--</option>
+              <option value="today" {{ filter_date_range == 'today' ? 'selected' : '' }}>Today</option>
+              <option value="yesterday" {{ filter_date_range == 'yesterday' ? 'selected' : '' }}>Yesterday</option>
+              <option value="last_week" {{ filter_date_range == 'last_week' ? 'selected' : '' }}>Last 7 Days</option>
+              <option value="last_month" {{ filter_date_range == 'last_month' ? 'selected' : '' }}>Last 30 Days</option>
+              <option value="last_90" {{ filter_date_range == 'last_90' ? 'selected' : '' }}>Last 90 Days</option>
+              <option value="last_year" {{ filter_date_range == 'last_year' ? 'selected' : '' }}>Last Year</option>
+              <option value="custom" {{ filter_date_range == 'custom' ? 'selected' : '' }}>Custom Range</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="custom-date-container" style="display: {{ filter_date_range == 'custom' ? 'block' : 'none' }};">
+  <div class="col-sm-3">
+    <div class="form-group">
+      <label class="control-label">{{ entry_date_start }}</label>
+      <div class="input-group date">
+        <input type="text" name="filter_date_start" value="{{ filter_date_start }}" placeholder="YYYY-MM-DD" data-date-format="YYYY-MM-DD" class="form-control" />
+        <span class="input-group-btn"><button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button></span>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-3">
+    <div class="form-group">
+      <label class="control-label">{{ entry_date_end }}</label>
+      <div class="input-group date">
+        <input type="text" name="filter_date_end" value="{{ filter_date_end }}" placeholder="YYYY-MM-DD" data-date-format="YYYY-MM-DD" class="form-control" />
+        <span class="input-group-btn"><button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button></span>
+      </div>
+    </div>
+  </div>
+</div>
+    
+          <div class="col-sm-3">
+            <div class="form-group" style="margin-top: 23px;">
+              <button type="button" id="button-filter" class="btn btn-primary" data-toggle="tooltip" title="{{ button_filter }}"><i class="fa fa-filter"></i> {{ button_filter }}</button>
+              <a href="index.php?route=extension/module/inventory_module/expense&user_token={{ user_token }}" id="button-clear" class="btn btn-default" data-toggle="tooltip" title="{{ button_reset }}"><i class="fa fa-refresh"></i> {{ button_reset }}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_list }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ delete }}" method="post" id="form-expense">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead>
+                  <tr>
+                    <td style="width: 1px;" class="text-center">
+                        <input type="checkbox" onclick="$('input[name*=\'selected\']').prop('checked', this.checked);" />
+                    </td>
+                    
+                    <td class="text-left">
+                        <a href="{{ sort_category }}" class="{% if sort == 'category_name' %}{{ order|lower }}{% endif %}">{{ column_category }}</a>
+                    </td>
+                    
+                    <td class="text-left">
+                        <a href="{{ sort_title }}" class="{% if sort == 'e.title' %}{{ order|lower }}{% endif %}">{{ column_title }}</a>
+                    </td>
+                    
+                    <td class="text-right">
+                        <a href="{{ sort_amount }}" class="{% if sort == 'e.amount' %}{{ order|lower }}{% endif %}">{{ column_amount }}</a>
+                    </td>
+                    
+                    <td class="text-left">
+                        <a href="{{ sort_date }}" class="{% if sort == 'e.expense_date' %}{{ order|lower }}{% endif %}">{{ column_date }}</a>
+                    </td>
+                    
+                    <td class="text-right">{{ column_action }}</td>
+                  </tr>
+                </thead>
+              <tbody>
+                {% if expenses %}
+                {% for e in expenses %}
+                <tr>
+                  <td class="text-center"><input type="checkbox" name="selected[]" value="{{ e.expense_id }}" /></td>
+                  <td class="text-left">{{ e.category_name }}</td>
+                  <td class="text-left">{{ e.title }}</td>
+                  <td class="text-right">{{ e.amount }}</td>
+                  <td class="text-left">{{ e.expense_date }}</td>
+                  <td class="text-right">
+                    <a href="{{ e.edit }}" data-toggle="tooltip" title="Edit" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+                  </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                <td class="text-center" colspan="6">{{ text_no_results }}</td>
+                </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+$('#button-filter').on('click', function() {
+    var url = 'index.php?route=extension/module/inventory_module/expense&user_token={{ user_token }}';
+
+    var filter_title = $('input[name=\'filter_title\']').val();
+    if (filter_title) {
+        url += '&filter_title=' + encodeURIComponent(filter_title);
+    }
+
+    var filter_category_id = $('select[name=\'filter_category_id\']').val();
+    if (filter_category_id) {
+        url += '&filter_category_id=' + encodeURIComponent(filter_category_id);
+    }
+
+    var filter_date = $('input[name=\'filter_date\']').val();
+    if (filter_date) {
+        url += '&filter_date=' + encodeURIComponent(filter_date);
+    }
+    
+    var filter_date_range = $('select[name=\'filter_date_range\']').val();
+    if (filter_date_range) {
+        url += '&filter_date_range=' + encodeURIComponent(filter_date_range);
+    }
+
+    var filter_date_start = $('input[name=\'filter_date_start\']').val();
+    if (filter_date_start) {
+        url += '&filter_date_start=' + encodeURIComponent(filter_date_start);
+    }
+
+    var filter_date_end = $('input[name=\'filter_date_end\']').val();
+    if (filter_date_end) {
+        url += '&filter_date_end=' + encodeURIComponent(filter_date_end);
+    }
+        
+    location = url;
+});
+
+
+$('#button-clear').on('click', function() {
+    location = 'index.php?route=extension/module/inventory_module/expense&user_token={{ user_token }}';
+});
+
+$('.date').datetimepicker({
+    language: '{{ datepicker }}',
+    pickTime: false
+});
+
+// Toggle Custom Dates
+$('#input-date-range').on('change', function() {
+    if ($(this).val() == 'custom') {
+        $('#custom-date-container').show();
+    } else {
+        $('#custom-date-container').hide();
+    }
+});
+
+
+</script>
+{{ footer }}

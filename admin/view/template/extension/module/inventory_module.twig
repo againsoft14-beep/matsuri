@@ -1,0 +1,74 @@
+{{ header }}
+{{ column_left }}
+
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <h1>Inventory Dashboard</h1>
+      <ul class="breadcrumb">
+        <li><a href="{{ dashboard }}">Home</a></li>
+        <li>Inventory Dashboard</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+
+```
+<div class="row">
+
+  <div class="col-lg-4 col-md-6">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          <i class="fa fa-cubes"></i> Inventory
+        </h3>
+      </div>
+      <div class="panel-body text-center">
+        <p>Manage stock, lots and product inventory.</p>
+        <a href="{{ inventory }}" class="btn btn-primary">
+          Open Inventory
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4 col-md-6">
+    <div class="panel panel-danger">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          <i class="fa fa-money"></i> Expense
+        </h3>
+      </div>
+      <div class="panel-body text-center">
+        <p>Track business expenses.</p>
+        <a href="{{ expense }}" class="btn btn-danger">
+          Manage Expense
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4 col-md-6">
+    <div class="panel panel-success">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          <i class="fa fa-users"></i> Payroll
+        </h3>
+      </div>
+      <div class="panel-body text-center">
+        <p>Employee salary and payroll system.</p>
+        <a href="{{ payroll }}" class="btn btn-success">
+          Open Payroll
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+```
+
+  </div>
+</div>
+
+{{ footer }}

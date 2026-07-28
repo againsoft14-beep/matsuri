@@ -1,0 +1,20 @@
+.wa__btn_popup {
+    right: unset !important;
+    left: var(--right-margin-button) !important;
+}
+
+.wa__btn_popup .wa__btn_popup_txt {
+    right: unset !important;
+    left: 100% !important;
+    margin-left: 10px;
+    padding-right: 10px;
+}
+
+.wa__popup_chat_box {
+    right: unset !important;
+    left: var(--right-margin-container) !important;
+}
+
+.wa__popup_notice {
+    text-align: right;
+}

@@ -1,0 +1,287 @@
+{{ header }}{{ column_left }}
+
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+        <div class="pull-right">
+            <a href="{{ export }}" data-toggle="tooltip" title="Export" class="btn btn-success"><i class="fa fa-file-excel-o"></i></a>
+        </div>
+     
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <div class="panel panel-default">
+      <div class="panel-heading" id="toggle-filter">
+        <h3 class="panel-title" >
+          <i class="fa fa-filter"></i> {{ text_filter }}
+        </h3>
+          <a href="#" class="pull-right" >
+            <i class="fa fa-chevron-down"></i>
+          </a>
+      </div>
+      <div class="panel-body" id="filter-panel" style="display: none;">
+       <form method="get" action="" class="form-horizontal" id="form-filter">
+  <div class="row">
+    <div class="col-md-3 col-sm-6">
+      <div class="form-group">
+        <label class="control-label" for="input-product-name">{{ entry_product }}</label>
+        <input type="text" name="filter_product_name" value="{{ filter_product_name }}" placeholder="{{ entry_product }}" id="input-product-name" class="form-control" autocomplete="off" />
+        <input type="hidden" name="filter_product_id" value="{{ filter_product_id }}" id="input-product-id" />
+      </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <div class="form-group">
+        <label class="control-label" for="input-sku">{{ entry_sku }}</label>
+        <input type="text" name="filter_sku" value="{{ filter_sku }}" placeholder="{{ entry_sku }}" id="input-sku" class="form-control" autocomplete="off" />
+      </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <div class="form-group">
+        <label class="control-label" for="input-lot-number">{{ entry_lot_number }}</label>
+        <input type="text" name="filter_lot_number" value="{{ filter_lot_number }}" placeholder="{{ entry_lot_number }}" id="input-lot-number" class="form-control" autocomplete="off" />
+      </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <div class="form-group">
+        <label class="control-label" for="input-date-start">{{ entry_date_start }}</label>
+        <div class="input-group date">
+          <input type="text" name="filter_date_start" value="{{ filter_date_start }}" placeholder="{{ entry_date_start }}" id="input-date-start" class="form-control" data-date-format="YYYY-MM-DD" />
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3 col-sm-6">
+      <div class="form-group">
+        <label class="control-label" for="input-date-end">{{ entry_date_end }}</label>
+        <div class="input-group date">
+          <input type="text" name="filter_date_end" value="{{ filter_date_end }}" placeholder="{{ entry_date_end }}" id="input-date-end" class="form-control" data-date-format="YYYY-MM-DD" />
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-9 col-sm-6">
+      <div class="form-group">
+        <label class="control-label" style="visibility: hidden;">&nbsp;</label>
+        <div class="btn-group" style="width: 100%;">
+          <button type="button" id="button-filter" class="btn btn-primary" style="margin-right: 10px;"><i class="fa fa-search"></i> {{ button_filter }}</button>
+          <button type="button" id="button-reset" class="btn btn-default"><i class="fa fa-refresh"></i> Reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_list }}</h3>
+      </div>
+      <div class="panel-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr style="background: #f5f5f5;">
+                <td class="text-left">
+                  <a href="{{ sort_lot }}" class="{% if sort == 'i.inventory_lotnumber' %}{{ order|lower }}{% endif %}">{{ column_lot_number }}</a>
+                </td>
+                <td class="text-left">
+                  <a href="{{ sort_product }}" class="{% if sort == 'product_name' %}{{ order|lower }}{% endif %}">{{ column_product }}</a>
+                </td>
+                <td class="text-left">
+                  <a href="{{ sort_sku }}" class="{% if sort == 'p.sku' %}{{ order|lower }}{% endif %}">{{ column_sku }}</a>
+                </td>
+                <td class="text-right">
+                  <a href="{{ sort_qty }}" class="{% if sort == 'id.quantity' %}{{ order|lower }}{% endif %}">{{ column_quantity }}</a>
+                </td>
+                <td class="text-right">
+                  <a href="{{ sort_current }}" class="{% if sort == 'id.current_quantity' %}{{ order|lower }}{% endif %}">{{ column_current_quantity }}</a>
+                </td>
+                <td class="text-right">
+                  <a href="{{ sort_price }}" class="{% if sort == 'id.sale_price' %}{{ order|lower }}{% endif %}">{{ column_price }}</a>
+                </td>
+                <td class="text-left">
+                  <a href="{{ sort_date }}" class="{% if sort == 'h.merge_timestamp' %}{{ order|lower }}{% endif %}">{{ column_date }}</a>
+                </td>
+              </tr>
+            </thead>
+            
+            <tbody>
+              {% if histories %}
+                {% for history in histories %}
+                <tr>
+                  <td class="text-left"><span class="label label-info">{{ history.lot_number }}</span></td>
+                  <td class="text-left">{{ history.product_name }}</td>
+                  <td class="text-left">{{ history.sku }}</td>
+                  <td class="text-right">{{ history.quantity }}</td>
+                  <td class="text-right">{{ history.current_quantity }}</td>
+                  <td class="text-right">{{ history.price }}</td>
+                  <td class="text-left">{{ history.date }}</td>
+                </tr>
+                {% endfor %}
+              {% else %}
+                <tr>
+                  <td class="text-center" colspan="7">{{ text_no_results }}</td>
+                </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+        <div class="row">
+          <div class="col-sm-6 text-left">{{ pagination }}</div>
+          <div class="col-sm-6 text-right">{{ results }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript"><!--
+
+
+// Clear product selection when input is manually changed
+$('input[name=\'filter_product_name\']').on('change', function() {
+    if (!$(this).val()) {
+        $('input[name=\'filter_product_id\']').val('');
+    }
+});
+
+// Toggle filter panel functionality
+$('#toggle-filter').on('click', function(e) {
+    e.preventDefault();
+    
+    var filterPanel = $('#filter-panel');
+    var icon = $(this).find('i');
+    
+    if (filterPanel.is(':visible')) {
+        filterPanel.slideUp('slow');
+        icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+        
+        // Save collapsed state in localStorage
+        localStorage.setItem('filter_collapsed', 'true');
+    } else {
+        filterPanel.slideDown('slow');
+        icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+        
+        // Save expanded state in localStorage
+        localStorage.setItem('filter_collapsed', 'false');
+    }
+});
+
+// Restore filter panel state from localStorage (optional - if you want to remember state)
+// Comment out if you always want it collapsed by default
+/*
+$(document).ready(function() {
+    var filterCollapsed = localStorage.getItem('filter_collapsed');
+    if (filterCollapsed === 'false') {
+        $('#filter-panel').show();
+        $('#toggle-filter i').removeClass('fa-chevron-down').addClass('fa-chevron-up');
+    }
+});
+*/
+
+// Filter functionality
+$('#button-filter').on('click', function() {
+    var url = '';
+    
+    var filter_product_name = $('input[name=\'filter_product_name\']').val();
+    if (filter_product_name) {
+        url += '&filter_product_name=' + encodeURIComponent(filter_product_name);
+    }
+    
+    var filter_sku = $('input[name=\'filter_sku\']').val();
+    if (filter_sku) {
+        url += '&filter_sku=' + encodeURIComponent(filter_sku);
+    }
+    
+    var filter_lot_number = $('input[name=\'filter_lot_number\']').val();
+    if (filter_lot_number) {
+        url += '&filter_lot_number=' + encodeURIComponent(filter_lot_number);
+    }
+    
+    var filter_date_start = $('input[name=\'filter_date_start\']').val();
+    if (filter_date_start) {
+        url += '&filter_date_start=' + encodeURIComponent(filter_date_start);
+    }
+    
+    var filter_date_end = $('input[name=\'filter_date_end\']').val();
+    if (filter_date_end) {
+        url += '&filter_date_end=' + encodeURIComponent(filter_date_end);
+    }
+    
+    location = 'index.php?route=extension/module/inventory_module/lot_merge&user_token={{ user_token }}' + url;
+});
+
+$('#button-reset').on('click', function() {
+    location = 'index.php?route=extension/module/inventory_module/lot_merge&user_token={{ user_token }}';
+});
+
+$('.date').datetimepicker({
+    pickTime: false
+});
+
+// Press Enter to filter
+$('#form-filter input').on('keypress', function(e) {
+    if (e.which === 13) {
+        $('#button-filter').click();
+        return false;
+    }
+});
+
+//--></script>
+
+<style type="text/css">
+#toggle-filter {
+    text-decoration: none;
+    color: inherit;
+    cursor:pointer;
+}
+#toggle-filter:hover {
+    opacity: 0.7;
+}
+.panel-heading .panel-title {
+    position: relative;
+}
+.panel-heading .pull-right {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+#filter-panel {
+    padding: 0 20px !important;
+}
+.form-group {
+    margin-bottom: 0;
+}
+@media (max-width: 767px) {
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .btn-group {
+        width: 100%;
+    }
+    #button-filter, #button-reset {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    #button-filter {
+        margin-right: 0 !important;
+    }
+}
+</style>
+
+{{ footer }}

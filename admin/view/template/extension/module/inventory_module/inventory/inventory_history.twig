@@ -1,0 +1,201 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <a href="{{ export }}" data-toggle="tooltip" title="{{ text_export }}" class="btn btn-success"><i class="fa fa-file-excel-o"></i> {{ text_export }}</a>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  
+  <div class="container-fluid">
+    <div class="row">
+      <div id="filter-history" class="col-md-3 col-md-push-9 col-sm-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-filter"></i> {{ text_filter }}</h3>
+          </div>
+          <div class="panel-body">
+            <div class="form-group">
+              <label class="control-label">{{ entry_product_name }}</label>
+              <input type="text" name="filter_name" value="{{ filter_name }}" placeholder="{{ entry_product_name }}" class="form-control" />
+            </div>
+            
+            <div class="form-group">
+              <label class="control-label">{{ entry_sku }}</label>
+              <input type="text" name="filter_sku" value="{{ filter_sku }}" placeholder="{{ entry_sku }}" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label class="control-label">{{ entry_lot_number }}</label>
+              <input type="text" name="filter_lot" value="{{ filter_lot }}" placeholder="{{ entry_lot_number }}" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label class="control-label">{{ entry_date_range }}</label>
+              <select name="filter_date_range" id="select-date-range" class="form-control">
+                <option value="lifetime" {% if filter_date_range == 'lifetime' %}selected{% endif %}>{{ text_lifetime }}</option>
+                <option value="today" {% if filter_date_range == 'today' %}selected{% endif %}>{{ text_today }}</option>
+                <option value="last_7_days" {% if filter_date_range == 'last_7_days' %}selected{% endif %}>{{ text_last_7_days }}</option>
+                <option value="last_month" {% if filter_date_range == 'last_month' %}selected{% endif %}>{{ text_last_month }}</option>
+                <option value="last_3_months" {% if filter_date_range == 'last_3_months' %}selected{% endif %}>{{ text_last_3_months }}</option>
+                <option value="last_year" {% if filter_date_range == 'last_year' %}selected{% endif %}>{{ text_last_year }}</option>
+                <option value="custom" {% if filter_date_range == 'custom' %}selected{% endif %}>{{ text_custom }}</option>
+              </select>
+            </div>
+
+            <div id="custom-date-fields" style="display: {% if filter_date_range == 'custom' %}block{% else %}none{% endif %};">
+              <div class="form-group">
+                <label class="control-label">{{ entry_date_start }}</label>
+                <div class="input-group date">
+                  <input type="text" name="filter_date_start" value="{{ filter_date_start }}" placeholder="YYYY-MM-DD" data-date-format="YYYY-MM-DD" class="form-control" />
+                  <span class="input-group-btn"><button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button></span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="control-label">{{ entry_date_end }}</label>
+                <div class="input-group date">
+                  <input type="text" name="filter_date_end" value="{{ filter_date_end }}" placeholder="YYYY-MM-DD" data-date-format="YYYY-MM-DD" class="form-control" />
+                  <span class="input-group-btn"><button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button></span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="form-group text-right">
+              <button type="button" id="button-filter" class="btn btn-primary"><i class="fa fa-filter"></i> {{ text_filter }}</button>
+              <a href="index.php?route=extension/module/inventory_module/history&user_token={{ user_token }}" class="btn btn-default"><i class="fa fa-refresh"></i> {{ text_clear }}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-9 col-md-pull-3 col-sm-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_history_list }}</h3>
+          </div>
+          <div class="panel-body">
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover">
+                <thead>
+                  <thead>
+                      <tr style="background: #fbfbfb;">
+                        <td class="text-left">
+                            <a href="{{ sort_date }}" class="{% if sort == 'i.inventory_date' %}{{ order|lower }}{% endif %}">{{ column_date }}</a>
+                        </td>
+                        <td class="text-left">
+                            <a href="{{ sort_lot }}" class="{% if sort == 'i.inventory_lotnumber' %}{{ order|lower }}{% endif %}">{{ column_lot_no }}</a>
+                        </td>
+                        <td class="text-left">
+                            <a href="{{ sort_name }}" class="{% if sort == 'product_name' %}{{ order|lower }}{% endif %}">{{ column_product }}</a>
+                        </td>
+                        <td class="text-left">
+                            <a href="{{ sort_sku }}" class="{% if sort == 'sku' %}{{ order|lower }}{% endif %}">{{ column_sku }}</a>
+                        </td>
+                        <td class="text-right">
+                            <a href="{{ sort_qty }}" class="{% if sort == 'id.quantity' %}{{ order|lower }}{% endif %}">{{ column_qty }}</a>
+                        </td>
+                        <td class="text-right">
+                            <a href="{{ sort_current_quantity }}" class="{% if sort == 'id.current_quantity' %}{{ order|lower }}{% endif %}">Current Qty</a>
+                        </td>
+                        <td class="text-right">
+                            <a href="{{ sort_purchase_price }}" class="{% if sort == 'id.purchase_price' %}{{ order|lower }}{% endif %}">{{ column_purchase_price }}</a>
+                        </td>
+                        <td class="text-right">
+                            <a href="{{ sort_additional_cost }}" class="{% if sort == 'id.additional_cost' %}{{ order|lower }}{% endif %}">{{ column_additional }}</a>
+                        </td>
+                        <td class="text-right">
+                            <a href="{{ sort_total }}" class="{% if sort == 'id.total_price' %}{{ order|lower }}{% endif %}">{{ column_total }}</a>
+                        </td>
+                        <td class="text-right">
+                            <a href="{{ sort_sale_price }}" class="{% if sort == 'id.sale_price' %}{{ order|lower }}{% endif %}">{{ column_sale_price }}</a>
+                        </td>
+                      </tr>
+                    </thead>
+                </thead>
+                <tbody>
+                  {% if histories %}
+                    {% for history in histories %}
+                    <tr>
+                      <td class="text-left">{{ history.date }}</td>
+                      <td class="text-left"><span class="label label-info">{{ history.lot_number }}</span></td>
+                      <td class="text-left"><strong>{{ history.product_name }}</strong></td>
+                      <td class="text-left">{{ history.sku }}</td>
+                      <td class="text-right">{{ history.quantity }}</td>
+                      <td class="text-right">{{ history.current_quantity }}</td>
+                      <td class="text-right">{{ history.purchase_price }}</td>
+                      <td class="text-right">{{ history.additional_cost }}</td>
+                      <td class="text-right">{{ history.total }}</td>
+                      <td class="text-right">{{ history.sale_price }}</td>
+                    </tr>
+                    {% endfor %}
+                  {% else %}
+                    <tr><td class="text-center" colspan="10">{{ text_no_results }}</td></tr>
+                  {% endif %}
+                </tbody>
+              </table>
+            </div>
+            <div class="row">
+              <div class="col-sm-6 text-left">{{ pagination }}</div>
+              <div class="col-sm-6 text-right">{{ results }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+  // 1. Custom Date Fields toggle
+  $('#select-date-range').on('change', function() {
+    if ($(this).val() == 'custom') {
+      $('#custom-date-fields').slideDown();
+    } else {
+      $('#custom-date-fields').slideUp();
+      $('input[name="filter_date_start"], input[name="filter_date_end"]').val('');
+    }
+  });
+
+  // 2. Filter Button Logic
+  $('#button-filter').on('click', function() {
+    var url = 'index.php?route=extension/module/inventory_module/history&user_token={{ user_token }}';
+
+    var filter_name = $('input[name="filter_name"]').val();
+    if (filter_name) url += '&filter_name=' + encodeURIComponent(filter_name);
+
+    var filter_sku = $('input[name="filter_sku"]').val();
+    if (filter_sku) url += '&filter_sku=' + encodeURIComponent(filter_sku);
+
+    var filter_lot = $('input[name="filter_lot"]').val();
+    if (filter_lot) url += '&filter_lot=' + encodeURIComponent(filter_lot);
+
+    var filter_date_range = $('#select-date-range').val();
+    if (filter_date_range !== 'lifetime') {
+      url += '&filter_date_range=' + encodeURIComponent(filter_date_range);
+    }
+
+    // Fixed: Capture Start and End dates for Custom Range
+    var filter_date_start = $('input[name="filter_date_start"]').val();
+    if (filter_date_start) url += '&filter_date_start=' + encodeURIComponent(filter_date_start);
+
+    var filter_date_end = $('input[name="filter_date_end"]').val();
+    if (filter_date_end) url += '&filter_date_end=' + encodeURIComponent(filter_date_end);
+
+    location = url;
+  });
+
+  // 4. Date Picker initialization
+  $('.date').datetimepicker({
+    language: '{{ datepicker }}',
+    pickTime: false,
+    format: 'YYYY-MM-DD' // Explicitly set format for consistency
+  });
+</script>
+</div>
+{{ footer }}

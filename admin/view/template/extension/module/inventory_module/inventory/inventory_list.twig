@@ -1,0 +1,190 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <a href="{{ add }}" data-toggle="tooltip" title="{{ text_add }}" class="btn btn-primary"><i class="fa fa-plus"></i></a>
+        <a href="{{ export }}" data-toggle="tooltip" title="Export" class="btn btn-success"><i class="fa fa-file-excel-o"></i> Export</a>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    
+    {% if error_warning %}
+      <div class="alert alert-danger alert-dismissible">
+        <i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+      </div>
+    {% endif %}
+    
+    {% if success %}
+      <div class="alert alert-success alert-dismissible">
+        <i class="fa fa-check-circle"></i> {{ success }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+      </div>
+    {% endif %}
+    
+    {# Filter Section #}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-filter"></i> {{ text_filter }}</h3>
+      </div>
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-sm-2">
+            <div class="form-group">
+              <label class="control-label">{{ entry_date_start }}</label>
+              <div class="input-group date">
+                <input type="text" name="filter_date_start" value="{{ filter_date_start }}" placeholder="YYYY-MM-DD" data-date-format="YYYY-MM-DD" class="form-control" />
+                <span class="input-group-btn"><button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button></span>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-2">
+            <div class="form-group">
+              <label class="control-label">{{ entry_date_end }}</label>
+              <div class="input-group date">
+                <input type="text" name="filter_date_end" value="{{ filter_date_end }}" placeholder="YYYY-MM-DD" data-date-format="YYYY-MM-DD" class="form-control" />
+                <span class="input-group-btn"><button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button></span>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-2">
+            <div class="form-group">
+              <label class="control-label">{{ entry_status }}</label>
+              <select name="filter_status" id="input-status" class="form-control">
+                <option value="">Select Status</option>
+                <option value="0" {% if filter_status == '0' %}selected{% endif %}>{{ text_pending }}</option>
+                <option value="1" {% if filter_status == '1' %}selected{% endif %}>{{ text_upcoming }}</option>
+                <option value="2" {% if filter_status == '2' %}selected{% endif %}>{{ text_received }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label class="control-label" for="input-title">{{ entry_lotnumber }}</label>
+              <input type="text" name="filter_title" value="{{ filter_title }}" placeholder="{{ entry_lotnumber }}" id="input-title" class="form-control" />
+            </div>
+          </div>
+          <div class="col-sm-3">
+            <div class="form-group" style="margin-top: 23px;">
+              <button type="button" id="button-filter" class="btn btn-primary" data-toggle="tooltip" title="{{ button_filter }}"><i class="fa fa-filter"></i> {{ button_filter }}</button>
+              <a href="index.php?route=extension/module/inventory_module/inventory&user_token={{ user_token }}" class="btn btn-default" data-toggle="tooltip" title="{{ button_clear }}"><i class="fa fa-refresh"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    {# List Section #}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_list }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ delete }}" method="post" enctype="multipart/form-data" id="form-inventory">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead>
+                <tr>
+                  <td class="text-left">SL</td>
+                  <td class="text-left">
+                      <a href="{{ sort_date }}" class="{% if sort == 'i.inventory_date' %}{{ order|lower }}{% endif %}">{{ column_date }}</a>
+                  </td>
+                  <td class="text-left">
+                    <a href="{{ sort_lotnumber }}" class="{% if sort == 'i.inventory_lotnumber' %}{{ order|lower }}{% endif %}">{{ column_lotnumber }}</a>
+                  </td>         
+                  <td class="text-left">
+                    <a href="{{ sort_products }}" class="{% if sort == 'total_products' %}{{ order|lower }}{% endif %}">{{ column_products }}</a>
+                  </td>   
+                  <td class="text-left">
+                    <a href="{{ sort_amount }}" class="{% if sort == 'total_amount' %}{{ order|lower }}{% endif %}">{{ column_price }}</a>
+                  </td>                  
+                  <td class="text-center">
+                    <a href="{{ sort_status }}" class="{% if sort == 'i.status' %}{{ order|lower }}{% endif %}">{{ column_status }}</a>
+                  </td>
+                  <td class="text-right">{{ column_action }}</td>
+                </tr>
+              </thead>
+              <tbody>
+                {% if inventories %}
+                {% for inventory in inventories %}
+                <tr>
+                  <td class="text-center">{{ loop.index }}</td>   
+                  <td class="text-left">{{ inventory.inventory_date }}</td>
+                  <td class="text-left">{{ inventory.inventory_lotnumber }}</td>
+                  <td class="text-left">{{ inventory.total_products }}</td>
+                  <td class="text-left">{{ inventory.total_price }}</td>
+                  <td class="text-center">
+                    <span class="label label-{{ inventory.status_class }}">{{ inventory.status_text }}</span>
+                  </td>
+                  <td class="text-right">
+                    <a href="{{ inventory.view }}" data-toggle="tooltip" title="{{ button_view }}" class="btn btn-info"><i class="fa fa-eye"></i></a>
+                    <a href="{{ inventory.edit }}" data-toggle="tooltip" title="{{ button_edit }}" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
+                  </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                  <td class="text-center" colspan="7">{{ text_no_results }}</td>
+                </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+
+        <div class="row">
+          <div class="col-sm-6 text-left">
+            {{ pagination }}
+          </div>
+          <div class="col-sm-6 text-right">
+            {{ results }}
+          </div>
+        </div>  
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript"><!--
+$('#button-filter').on('click', function() {
+    var url = 'index.php?route=extension/module/inventory_module/inventory&user_token={{ user_token }}';
+
+    var filter_date_start = $('input[name=\'filter_date_start\']').val();
+    if (filter_date_start) {
+        url += '&filter_date_start=' + encodeURIComponent(filter_date_start);
+    }
+
+    var filter_date_end = $('input[name=\'filter_date_end\']').val();
+    if (filter_date_end) {
+        url += '&filter_date_end=' + encodeURIComponent(filter_date_end);
+    }
+
+    var filter_status = $('select[name=\'filter_status\']').val();
+    if (filter_status) {
+        url += '&filter_status=' + encodeURIComponent(filter_status);
+    }
+
+    var filter_title = $('input[name=\'filter_title\']').val();
+    if (filter_title) {
+        url += '&filter_title=' + encodeURIComponent(filter_title);
+    }
+
+    location = url;
+});
+//--></script>
+
+<script type="text/javascript">
+$('.date').datetimepicker({
+    pickTime: false
+});
+</script>
+
+{{ footer }}

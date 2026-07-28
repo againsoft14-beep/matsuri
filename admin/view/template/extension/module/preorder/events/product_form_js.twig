@@ -1,0 +1,28 @@
+<script>
+$(document).ready(function() {
+  var stock_status_array = {{ enabled_stock_status_json ?: 'null' }} ;
+
+  if(stock_status_array !== null) {
+    var exists = $.inArray($('#input-stock-status').val(), stock_status_array);
+    if(exists > -1) {
+      $('.pre_order_form').css('display', 'block');
+      $('#preorder_enabled').val('yes');
+    } else {
+      $('.pre_order_form').css('display', 'none');
+      $('#preorder_enabled').val('no');
+    }
+
+    $('#input-stock-status').change(function() {
+      var exists = $.inArray($(this).val(), stock_status_array);
+
+      if(exists > -1) {
+        $('.pre_order_form').slideDown("slow");
+        $('#preorder_enabled').val('yes');
+      } else {
+        $('.pre_order_form').slideUp("slow");
+        $('#preorder_enabled').val('no');
+      }
+    });
+  }
+});
+</script>

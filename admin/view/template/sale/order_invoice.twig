@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html dir="{{ direction }}" lang="{{ lang }}">
+<head>
+<meta charset="UTF-8" />
+<title>{{ title }}</title>
+<base href="{{ base }}" />
+<link href="view/javascript/bootstrap/css/bootstrap.css" rel="stylesheet" media="all" />
+<script type="text/javascript" src="view/javascript/jquery/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="view/javascript/bootstrap/js/bootstrap.min.js"></script>
+<link href="view/javascript/font-awesome/css/font-awesome.min.css" type="text/css" rel="stylesheet" />
+<link type="text/css" href="view/stylesheet/stylesheet.css" rel="stylesheet" media="all" />
+
+<style>
+    @media print {
+        body { margin-bottom: 0; padding-bottom: 0; }
+        footer { display: none; }
+        
+        .extra-element-selector { /* jodi thake */
+            display: none !important;
+        }
+        
+        html, body {
+            height: auto !important;
+            overflow: visible !important;
+        }
+        .page-break { display: none; }
+        table { page-break-after: auto; }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+  {% for order in orders %}
+  <div style="{% if not loop.last %}page-break-after: always;{% endif %}">
+    <table class="table" style="margin-bottom: 0px;">
+      <tr>
+        <td><img  src="/image/cache/catalog/website/logo/matsuri-1000x548.png.webp" width="130px" alt="Matsuri" title="Matsuri"></td>
+        <td style="text-align: right; border:none;">
+          <h1 style="margin:0; color:#333;">{{ text_invoice }}</h1>
+          <span style="font-size:18px; color:#666;">#{{ order.invoice_no ? order.invoice_no : order.order_id|format('%07d')  }}</span>
+        </td>
+      </tr>
+    </table>
+    
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <td colspan="2">{{ text_order_detail }}</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="width: 50%;"><address>
+            <strong>{{ order.store_name }}</strong><br />
+            {{ order.store_address }}
+            </address>
+            
+          <td style="width: 50%;"><b>{{ text_date_added }}</b> {{ order.date_added }}<br />
+            {% if order.invoice_no %}
+            <b>{{ text_invoice_no }}</b> {{ order.invoice_no }}<br />
+            {% endif %}
+            <b>{{ text_order_id }}</b> {{ order.order_id }}<br />
+            <b>{{ text_payment_method }}</b> {{ order.payment_method }}<br />
+            
+        </tr>
+      </tbody>
+    </table>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <td style=""><b>{{ text_shipping_address }}</b></td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-size:18px; font-weight:600;"><address>
+            {{ order.shipping_address }}
+            </address>
+            {% if order.comment %}
+                <br/>
+                <br/>
+                
+                Order Note: {{ order.comment }}
+            {% endif %}
+            </td>
+        </tr>
+        
+  
+      </tbody>
+    </table>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <td><b>{{ column_product }}</b></td>
+          <td><b>{{ column_sku }}</b></td>
+          <td class="text-right"><b>{{ column_quantity }}</b></td>
+          <td class="text-right"><b>{{ column_price }}</b></td>
+          <td class="text-right"><b>{{ column_total }}</b></td>
+        </tr>
+      </thead>
+      <tbody>
+        {% for product in order.product %}
+        <tr>
+          <td>{{ product.name }}
+            {% for option in product.option %}
+            <br />
+            &nbsp;<small> - {{ option.name }}: {{ option.value }}</small>
+            {% endfor %}</td>
+          <td>{{ product.sku }}</td>
+          <td class="text-right">{{ product.quantity }}</td>
+          <td class="text-right">{{ product.price }}</td>
+          <td class="text-right">{{ product.total }}</td>
+        </tr>
+        {% endfor %}
+        {% for voucher in order.voucher %}
+        <tr>
+          <td>{{ voucher.description }}</td>
+          <td></td>
+          <td class="text-right">1</td>
+          <td class="text-right">{{ voucher.amount }}</td>
+          <td class="text-right">{{ voucher.amount }}</td>
+        </tr>
+        {% endfor %}
+        {% for total in order.total %}
+        <tr>
+          <td class="text-right" colspan="4"><b>{{ total.title }}</b></td>
+          <td class="text-right">{{ total.text }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {#{% if order.comment %}#}
+    {#<table class="table table-bordered">#}
+    {#  <thead>#}
+    {#    <tr>#}
+    {#      <td><b>{{ text_comment }}</b></td>#}
+    {#    </tr>#}
+    {#  </thead>#}
+    {#  <tbody>#}
+    {#    <tr>#}
+    {#      <td>{{ order.comment }}</td>#}
+    {#    </tr>#}
+    {#  </tbody>#}
+    {#</table>#}
+    {#{% endif %}#}
+  </div>
+  {% endfor %}
+</div>
+<script type="text/javascript">
+   window.print();
+</script>
+</body>
+</html>

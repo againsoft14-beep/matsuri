@@ -1,0 +1,40 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <a href="{{ cancel }}" data-toggle="tooltip" title="Cancel" class="btn btn-default"><i class="fa fa-reply"></i></a>
+      </div>
+      <h1>Expense Category Form</h1>
+      {{breadcrumb}}
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ heading_title}}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-category" class="form-horizontal">
+            <div class="form-group required {% if error_name %} has-error {% endif %}">
+              <label class="col-sm-2 control-label" for="input-name">{{ entry_name }}</label>
+              <div class="col-sm-10">
+                <input type="text" name="name" value="{{ name }}" placeholder="{{ entry_name }}" id="input-name" class="form-control" />
+                {% if error_name %}
+                  <div class="text-danger">{{ error_name }}</div>
+                {% endif %}
+              </div>
+            </div>
+        </form>
+        
+        <div class="form-group">
+            <div class="col-sm-10 col-sm-offset-2 text-right">
+                <button type="submit" form="form-category" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i> {{ button_save }}</button>
+            </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+{{ footer }}

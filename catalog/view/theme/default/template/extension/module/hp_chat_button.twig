@@ -1,0 +1,69 @@
+{% if hpcb_status %}
+	<link rel="stylesheet" href="catalog/view/javascript/whatsapp-chat-support.css">
+	<style>
+        .wcs_button_person {
+            background: {{color_scheme_button}};
+        }
+
+        .whatsapp_chat_support {
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        .wcs_button_person_description {
+            padding-right: 5px;
+            font-weight: 600;
+        }
+	</style>
+
+	<div class="hpcb_whatsapp_support">
+		{% for whatsapp in whatsapps %}
+			{% if whatsapp.status and whatsapp.inline_chat_btn %}
+
+				{% if whatsapp.online_status == "1" %}
+					<a
+							{% if whatsapp.link_type == 1 %}
+								{% if is_mobile %}
+									{% if mobile_compatibility %}
+										href="https://wa.me/{{ whatsapp.wa_country }}{{ whatsapp.wa_number }}?text={{ whatsapp_text }}" %}
+									{% else %}
+										href="whatsapp://send?phone={{ whatsapp.wa_country }}{{ whatsapp.wa_number }}&text={{ whatsapp_text }}"
+									{% endif %}
+								{% else %}
+									href="https://wa.me/{{ whatsapp.wa_country }}{{ whatsapp.wa_number }}?text={{ whatsapp_text }}" target="_blank"
+								{% endif %}
+							{% else %}
+								href="{{ whatsapp.custom_link }}" target="_blank"
+							{% endif %}
+							class="whatsapp_chat_support wcs-effect-1">
+						<div class="wcs_button wcs_button_person">
+
+							<div class="wcs_button_person_img"><img src="{{ whatsapp.picture_wa }}" alt="{{ whatsapp.position }}-img"></div>
+							<div class="wcs_button_person_content">
+								<div class="wcs_button_person_name">{{ whatsapp.name }}
+									&nbsp;/&nbsp; {{ whatsapp.position }}</div>
+								<div class="wcs_button_person_description">{{ call_to_action }}</div>
+								<div class="wcs_button_person_status">{{ text_online }}</div>
+							</div>
+						</div>
+					</a>
+				{% else %}
+					<div class="whatsapp_chat_support wcs-effect-1">
+						<div class="wcs_button wcs_button_person wcs_button_person_offline">
+
+							<div class="wcs_button_person_img"><img src="{{ whatsapp.picture_wa }}" alt="{{ whatsapp.position }}-img"></div>
+							<div class="wcs_button_person_content">
+								<div class="wcs_button_person_name">{{ whatsapp.name }}
+									&nbsp;/&nbsp; {{ whatsapp.position }}</div>
+								<div class="wcs_button_person_description">{{ call_to_action }}</div>
+								<div class="wcs_button_person_status">{% if whatsapp.online_status == 2 %}Away{% else %} OFFLINE {% endif %}</div>
+							</div>
+						</div>
+					</div>
+
+				{% endif %}
+			{% endif %}
+
+		{% endfor %}
+	</div>
+{% endif %}

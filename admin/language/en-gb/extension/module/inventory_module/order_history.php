@@ -1,0 +1,21 @@
+<?php
+$_['heading_title']      = 'Order History';
+$_['text_list']          = 'Product Order List';
+$_['column_order_id']    = 'Order ID';
+$_['column_customer']    = 'Customer';
+$_['column_product']     = 'Product Name';
+$_['column_sku']         = 'SKU';
+$_['column_phone']       = 'Phone';
+$_['column_status']      = 'Status';
+$_['column_quantity']    = 'Qty';
+$_['column_price']       = 'Price';
+$_['column_total']       = 'Total';
+$_['column_lot_number']  = 'Lot Number';
+$_['column_date_added']  = 'Date Added';
+$_['entry_customer']     = 'Customer Name';
+$_['entry_product']      = 'Product Name';
+$_['entry_lot_number']   = 'Lot Number';
+$_['entry_phone']        = 'Phone';
+$_['entry_date_start']   = 'Date Start';
+$_['entry_date_end']     = 'Date End';
+$_['button_filter']      = 'Filter';

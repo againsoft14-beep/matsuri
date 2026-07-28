@@ -1,0 +1,38 @@
+</div>
+<div id="preorderFirstField" class="form-group pre_order_form">
+  <label class="col-sm-2 control-label" for="input-stock-status"><span data-toggle="tooltip" title="The text to be displayed next to the pre-ordered products in the cart.">Pre-Order Note</span></label>
+  <div class="col-sm-10">
+    {% for language in languages %}
+    <div class="input-group" style="margin:10px auto;">
+      <div class="input-group-addon"><img src="{{ language.flag_url }}" title="{{ language.name }}" /></div>
+      <input type="text" name="preorder[preorder_note][{{ language.language_id }}]" value="{{ data.preorder[language.language_id].preorder_note ?: (data.preorder.preorder_note[language.language_id] ?: '' ) }}" placeholder="Pre-Order Note" id="preorder[preorder_note][{{ language.language_id }}]" class="form-control" />
+    </div>
+    {% endfor %}
+  </div>
+</div>
+<div class="form-group pre_order_form">
+  <label class="col-sm-2 control-label" for="input-stock-status"><span data-toggle="tooltip" title="The date on which the product will be available">Pre-Order Date</span></label>
+  <div class="col-sm-3">
+    <div class="input-group date">
+      <input type="text" name="preorder[preorder_date]" value="{{ data.preorder[language_id].preorder_date ?: (data.preorder.preorder_date ?: '' ) }}" placeholder="Pre-Order Date" id="preorder_date" data-date-format="YYYY-MM-DD" class="form-control" />
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
+      </span>
+    </div>
+  </div>
+
+  <input type="hidden" id="preorder_enabled" name="preorder_enabled" value="no" style="display: none;" />
+  <script>
+  $(document).ready(function() {
+    $("#preorderFirstField").prev().remove();
+    $("#stockStatusSelect").after($(".pre_order_form").detach());
+  });
+  </script>
+</div>
+<div class="form-group pre_order_form">
+  <label class="col-sm-2 control-label" for="pre-order-quantity"><span data-toggle="tooltip" title="The quantity available for pre-order. Quantity amount subtracted when order placed.">Pre-Order Quantity</span></label>
+  <div class="col-sm-3">
+    <input type="text" name="preorder[preorder_quantity]" value="{{ (data.preorder[language_id].preorder_quantity is defined)  ? data.preorder[language_id].preorder_quantity : '99' }}" placeholder="99" id="pre-order-quantity" class="form-control">
+  </div>
+</div>
+<div class="form-group" id="stockStatusSelect">

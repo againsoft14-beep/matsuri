@@ -1,0 +1,24 @@
+======================= Admin ============================
+---------------------- Controller ------------------------
+matsuridev.client.againtheme.com/admin/controller/extension/module
+/home/clientagaintheme/matsuridev.client.againtheme.com/admin/controller/extension/module/inventory_module/expense.php
+
+---------------------- Model -----------------------------
+matsuridev.client.againtheme.com/admin/model/extension/module
+/home/clientagaintheme/matsuridev.client.againtheme.com/admin/model/extension/module/inventory_module/expense.php
+
+---------------------- Twig ------------------------------
+matsuridev.client.againtheme.com/admin/view/template/extension/module
+/home/clientagaintheme/matsuridev.client.againtheme.com/admin/view/template/extension/module/inventory_module/expense/expense.twig
+
+---------------------- Language --------------------------
+
+
+======================= Catalog ============================
+---------------------- Controller ------------------------
+
+---------------------- Model -----------------------------
+
+---------------------- Twig ------------------------------
+
+---------------------- Language --------------------------

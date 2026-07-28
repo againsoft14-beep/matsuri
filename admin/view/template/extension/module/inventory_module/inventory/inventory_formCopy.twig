@@ -1,0 +1,381 @@
+{{ header }}{{ column_left }}
+<div id="content">
+   <div class="page-header">
+      <div class="container-fluid">
+         <div class="pull-right">
+            <a href="{{ cancel }}" class="btn btn-default">
+            <i class="fa fa-reply"></i>
+            </a>
+         </div>
+         <h1>{{text_form}}</h1>
+         <ul class="breadcrumb">
+            {% for breadcrumb in breadcrumbs %}
+            <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+            {% endfor %}
+         </ul>
+      </div>
+   </div>
+   <div class="container-fluid">
+       {% if error_warning %}
+          <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+          </div>
+          {% endif %}
+          {% if success %}
+          <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+          </div>
+      {% endif %}
+       
+      <div class="panel panel-default">
+         <div class="panel-heading">
+            <h3 class="panel-title"><i class="fa fa-pencil"></i> Inventory Form</h3>
+         </div>
+         <div class="panel-body">
+            <form action="{{ action }}" method="post" id="form-inventory" class="form-horizontal">
+              <div class="row">
+
+                  <div class="col-md-5 col-sm-12">
+
+                    <div class="form-group">
+
+                      <label class="control-label">Inventory Date</label>
+                      <div class="row">
+                        <div class="col-xs-2" style="padding-right: 5px;">
+                          <select name="inventory_day" id="inventory_day" class="form-control">
+                            <option value="" disabled selected>Day</option>
+                            {% for d in 1..31 %}
+                            <option value="{{ d }}" {% if d == inventory_day %}selected{% endif %}>{{ d }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                        <div class="col-xs-5" style="padding-left: 5px; padding-right: 5px;">
+                          <select name="inventory_month" id="inventory_month" class="form-control">
+                            <option value="" disabled selected>Month</option>
+                            {% set months = {
+                              1:'January', 2:'February', 3:'March', 4:'April',
+                              5:'May', 6:'June', 7:'July', 8:'August',
+                              9:'September', 10:'October', 11:'November', 12:'December'
+                            } %}
+                            {% for key, month in months %}
+                            <option value="{{ key }}" {% if key == inventory_month %}selected{% endif %}>{{ month }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                        
+                        <div class="col-xs-5" style="padding-left: 5px;">
+                          <select name="inventory_year" id="inventory_year" class="form-control">
+                            <option value="" disabled selected>Year</option>
+                            {% set currentYear = "now"|date("Y") %}
+                            {% for y in currentYear..(currentYear + 5) %}
+                            <option value="{{ y }}" {% if y == inventory_year %}selected{% endif %}>{{ y }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-2 col-sm-4">
+                    <div class="form-group required {% if error_lotnumber %}has-error{% endif %}">
+                      <label class="control-label">Lot Number</label>
+                      <input readonly type="text" name="inventory_lotnumber" id="inventory_lotnumber" value="{{ inventory_lotnumber }}" placeholder="Lot #" class="form-control" style="background-color: #eee; cursor: not-allowed;"/>
+                      {% if error_lotnumber %}<div class="text-danger">{{ error_lotnumber }}</div>{% endif %}
+                    </div>
+                  </div>
+
+                  <div class="col-md-3 col-sm-4">
+                    <div class="form-group required {% if error_supplier %}has-error{% endif %}">
+                      <label class="control-label">Supplier</label>
+                      <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-truck"></i></span>
+                        <input type="text" name="supplier_name" value="{{ supplier_name }}" placeholder="Search..." class="form-control" autocomplete="off"/>
+                      </div>
+                      <input type="hidden" name="supplier_id" value="{{ supplier_id }}"/>
+                      {% if error_supplier %}<div class="text-danger">{{ error_supplier }}</div>{% endif %}
+                    </div>
+                  </div>
+
+                  <div class="col-md-2 col-sm-4">
+                    <div class="form-group required {% if error_status %}has-error{% endif %}">
+                      <label class="control-label">Status</label>
+                      <select name="inventory_status" class="form-control">
+                        <option value="pending" {% if inventory_status == 'pending' %}selected{% endif %}>Pending</option>
+                        <option value="upcoming" {% if inventory_status == 'upcoming' %}selected{% endif %}>Upcoming</option>
+                        <option value="received" {% if inventory_status == 'received' %}selected{% endif %}>Received</option>
+                      </select>
+                      {% if error_status %}<div class="text-danger">{{ error_status }}</div>{% endif %}
+                    </div>
+                  </div>
+                </div>
+                
+               <hr>
+               <div class="form-group">
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                            <input type="text" id="input-product" class="form-control" placeholder="Type product name to add to list..."/>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <select id="category-filter" class="form-control">
+                                    <option value="0">-- All Categories --</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category.category_id }}" 
+                                            {% if category_id == category.category_id %}selected{% endif %}>
+                                            {{ category.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <button type="button" class="btn btn-primary" id="btn-filter">
+                                    <i class="fa fa-filter"></i> Filter
+                                </button>
+                                
+                                {% if category_id %}
+                                    <a href="{{ action }}" class="btn btn-warning">
+                                        <i class="fa fa-times"></i> Reset
+                                    </a>
+                                {% endif %}
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+               <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="product">
+                    <thead>
+                        <tr class="active">
+                            <th width="60">SL.</th>
+                            <th width="80">ID</th>
+                            <th>Product</th>
+                            <th class="text-right" width="100">Qty</th>
+                            <th class="text-right" width="100">{{ column_damage_quantity }}</th>
+                            <th class="text-right" width="130">Purchase Price</th>
+                            <th class="text-right" width="130">Add. Cost</th>
+                            <th class="text-right" width="130">Total Price</th>
+                            <th class="text-right" width="130">Sale Price</th>
+                            <th>Remarks</th>
+                            <th width="50">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+    {% set row = 0 %}
+    {% for product in products %}
+    <tr id="row{{ row }}">
+        <td class="text-center js-sl-number">{{ loop.index }}</td>
+        <td>{{ product.product_id }}</td>
+        <td>
+            {{ product.name }}
+            <input type="hidden" name="products[{{ row }}][product_id]" value="{{ product.product_id }}">
+            <input type="hidden" name="products[{{ row }}][is_merge_lot_quantity_to_main]" value="{{ product.is_merge_lot_quantity_to_main }}">
+            {% if product.categories %}
+                <br>
+                {% for category in product.categories %}
+                    <span class="badge" style="background-color: #6c757d; color: #fff; 
+                        font-size: 11px; padding: 2px 6px; border-radius: 4px; margin-right: 2px;">
+                        {{ category }}
+                    </span>
+                {% endfor %}
+            {% endif %}
+        </td>
+        
+        {# Quantity Field #}
+        <td class="{% if error_products[row].quantity %}has-error{% endif %}">
+            <input type="number" {{ product.is_merge_lot_quantity_to_main == 1 ? "readonly" : ""}} name="products[{{ row }}][quantity]" class="form-control text-right qty" value="{{ product.quantity }}">
+            {% if error_products[row].quantity %}
+                <div class="text-danger small">{{ error_products[row].quantity }}</div>
+            {% endif %}
+        </td>
+
+        {# Damage Quantity Field #}
+        <td class="{% if error_products[row].damage_quantity %}has-error{% endif %}">
+            <input type="number" name="products[{{ row }}][damage_quantity]" class="form-control text-right damage" value="{{ product.damage_quantity }}">
+            {% if error_products[row].damage_quantity %}
+                <div class="text-danger small">{{ error_products[row].damage_quantity }}</div>
+            {% endif %}
+        </td>
+        
+        {# Purchase Price Field #}
+        <td class="{% if error_products[row].purchase_price %}has-error{% endif %}">
+            <input type="text" name="products[{{ row }}][purchase_price]" value="{{ product.purchase_price }}" class="form-control text-right purchase">
+            {% if error_products[row].purchase_price %}
+                <div class="text-danger small">{{ error_products[row].purchase_price }}</div>
+            {% endif %}
+        </td>
+        
+        {# Additional Cost Field #}
+        <td class="{% if error_products[row].additional_cost %}has-error{% endif %}">
+            <input type="text" name="products[{{ row }}][additional_cost]" value="{{ product.additional_cost }}" class="form-control text-right cost">
+            {% if error_products[row].additional_cost %}
+                <div class="text-danger small">{{ error_products[row].additional_cost }}</div>
+            {% endif %}
+        </td>
+        
+        <td><input type="text" name="products[{{ row }}][total_price]" value="{{ product.total_price }}" class="form-control text-right total" readonly></td>
+        
+        {# Sale Price Field #}
+        <td class="{% if error_products[row].sale_price %}has-error{% endif %}">
+            <input type="text" {{ product.is_merge_lot_quantity_to_main == 1 ? "readonly" : ""}} name="products[{{ row }}][sale_price]" value="{{ product.sale_price }}" class="form-control text-right">
+            {% if error_products[row].sale_price %}
+                <div class="text-danger small">{{ error_products[row].sale_price }}</div>
+            {% endif %}
+        </td>
+        
+        <td><input type="text" name="products[{{ row }}][remarks]" value="{{ product.remarks }}" class="form-control"></td>
+        
+        <td class="text-center">
+            <button type="button" {{ product.is_merge_lot_quantity_to_main == 1 ? "disabled" : ""}} onclick="if(confirm('Are you sure you want to remove this item?')) { $('#row{{ row }}').remove(); }" class="btn btn-danger btn-sm"><i class="fa fa-minus-circle"></i></button>
+        </td>
+    </tr>
+    {% set row = row + 1 %}
+    {% endfor %}
+</tbody>
+                </table>
+            </div>
+            </form>
+            
+            <div class="form-group">
+                <div class="col-sm-10 col-sm-offset-2 text-right">
+                 <button type="submit" form="form-inventory" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+                </div>
+            </div>
+            
+         </div>
+      </div>
+   </div>
+</div>
+
+<script>
+function updateLotNumber() {
+    let day = document.getElementById('inventory_day').value;
+    let month = document.getElementById('inventory_month').value;
+    let year = document.getElementById('inventory_year').value;
+
+    if (day && month && year) {
+        day = day.padStart(2, '0');
+        month = month.padStart(2, '0');
+
+        let now = new Date();
+        let timePart = now.getHours().toString().padStart(2, '0') + 
+                       now.getMinutes().toString().padStart(2, '0') + 
+                       now.getSeconds().toString().padStart(2, '0');
+
+        let lot = year + month + day + '-' + timePart;
+        document.getElementById('inventory_lotnumber').value = lot;
+    }
+}
+
+document.getElementById('inventory_day').addEventListener('change', updateLotNumber);
+document.getElementById('inventory_month').addEventListener('change', updateLotNumber);
+document.getElementById('inventory_year').addEventListener('change', updateLotNumber);
+
+updateLotNumber();
+</script>
+
+<script>
+
+    // var row = 0;
+    var row = {{ products|length }};
+    
+    $('.date').datetimepicker({
+        pickTime: false
+    });
+    
+    $('#input-product').autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: 'index.php?route=catalog/product/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request) + '&limit=15',
+                dataType: 'json',
+                    success: function(json) {
+                    response($.map(json, function(item) {
+                        return {
+                            label: item['name'],
+                            value: item['product_id']
+                        }
+                    }));
+                }
+            });
+        },
+    
+        select: function(item) {
+            $('#input-product').val('');
+            
+            var currentSl = $('#product tbody tr').length + 1;
+            
+            var html = '';
+            html += '<tr id="row' + row + '">';
+            html += '<td class="text-center js-sl-number">' + currentSl + '</td>'; 
+            html += '<tr id="row' + row + '">';
+            html += '<td>' + item['label'] + '<input type="hidden" name="products[' + row + '][product_id]" value="' + item['value'] + '"><input type="hidden" name="products[' + row + '][is_merge_lot_quantity_to_main]" value="0"></td>';
+            html += '<td><input type="number" name="products[' + row + '][quantity]" class="form-control qty" value="1"></td>';
+            html += '<td><input type="number" name="products[' + row + '][damage_quantity]" class="form-control damage" value="0"></td>';
+            html += '<td><input type="text" name="products[' + row + '][purchase_price]" class="form-control purchase"></td>';
+            html += '<td><input type="text" name="products[' + row + '][additional_cost]" class="form-control cost"></td>';
+            html += '<td><input type="text" name="products[' + row + '][total_price]" class="form-control total" readonly></td>';
+            html += '<td><input type="text" name="products[' + row + '][sale_price]" class="form-control"></td>';
+            html += '<td><input type="text" name="products[' + row + '][remarks]" class="form-control"></td>';
+            html += '<td class="text-center">';
+    
+            // পরিবর্তন: এখানে JavaScript কনফার্মেশন অ্যালার্ট যুক্ত করা হয়েছে 
+            html += '<button type="button" onclick="if(confirm(\'Are you sure you want to remove this item?\')) { $(\'#row' + row + '\').remove(); }" class="btn btn-danger">';
+            html += '<i class="fa fa-minus-circle"></i>';
+            html += '</button>';
+            html += '</td>';
+            html += '</tr>';
+            
+            $('#product tbody').append(html);
+            row++;
+        }
+    
+    });
+    
+    $(document).on('keyup change', '.purchase,.cost', function() {
+        var tr = $(this).closest('tr');
+        var purchase = parseFloat(tr.find('.purchase').val()) || 0;
+        var cost = parseFloat(tr.find('.cost').val()) || 0;
+        var total = purchase + cost;
+        tr.find('.total').val(total.toFixed(2));
+    
+    });
+    
+    $('input[name="supplier_name"]').autocomplete({
+        source: function(request, response) {
+            $.ajax({
+                url: 'index.php?route=extension/module/inventory_module/supplier/autocomplete&user_token={{ user_token }}&filter_name=' + encodeURIComponent(request),
+    
+                dataType: 'json',
+                success: function(json) {
+                    response($.map(json, function(item) {
+                        return {
+                            label: item['name'],
+                            value: item['supplier_id']
+                        }
+                    }));
+                }
+            });
+        },
+    
+        select: function(item) {
+            $('input[name="supplier_name"]').val(item['label']);
+            $('input[name="supplier_id"]').val(item['value']);
+        }
+    });
+    
+    document.getElementById('btn-filter').addEventListener('click', function() {
+    const categoryId = document.getElementById('category-filter').value;
+    const inventoryId = {{ inventory_id }};  
+    
+    const url = new URL(window.location.href);
+    url.searchParams.set('category_id', categoryId);
+    url.searchParams.set('inventory_id', inventoryId);
+    
+    window.location.href = url.toString();
+});
+    
+</script>
+
+{{ footer }}

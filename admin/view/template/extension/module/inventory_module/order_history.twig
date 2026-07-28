@@ -1,0 +1,156 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+        <div class="pull-right">
+            <a href="{{ export }}" data-toggle="tooltip" title="Export" class="btn btn-success"><i class="fa fa-file-excel-o"></i> Export</a>
+        </div>
+      
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="panel panel-default">
+      <div class="panel-heading"><h3 class="panel-title"><i class="fa fa-list"></i> {{ text_list }}</h3></div>
+      <div class="panel-body">
+        <div class="well">
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="form-group">
+                <label class="control-label">{{ entry_customer }}</label>
+                <input type="text" name="filter_customer" value="{{ filter_customer }}" placeholder="{{ entry_customer }}" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label class="control-label">{{ entry_product }}</label>
+                <input type="text" name="filter_product" value="{{ filter_product }}" placeholder="{{ entry_product }}" class="form-control" />
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="form-group">
+                <label class="control-label">{{ entry_lot_number }}</label>
+                <input type="text" name="filter_lot_number" value="{{ filter_lot_number }}" placeholder="{{ entry_lot_number }}" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label class="control-label">{{ entry_phone }}</label>
+                <input type="text" name="filter_phone" value="{{ filter_phone }}" placeholder="{{ entry_phone }}" class="form-control" />
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="form-group">
+                <label class="control-label">{{ entry_date_start }}</label>
+                <div class="input-group date">
+                  <input type="text" name="filter_date_start" value="{{ filter_date_start }}" placeholder="YYYY-MM-DD" data-date-format="YYYY-MM-DD" class="form-control" />
+                  <span class="input-group-btn"><button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button></span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="control-label">{{ entry_date_end }}</label>
+                <div class="input-group date">
+                  <input type="text" name="filter_date_end" value="{{ filter_date_end }}" placeholder="YYYY-MM-DD" data-date-format="YYYY-MM-DD" class="form-control" />
+                  <span class="input-group-btn"><button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button></span>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="pull-right">
+                    <button type="button" id="button-filter" class="btn btn-primary" data-toggle="tooltip" title="{{ button_filter }}"><i class="fa fa-filter"></i> {{ button_filter }}</button>
+                    <button type="button" id="button-clear" class="btn btn-default" data-toggle="tooltip" title="Clear Filters"><i class="fa fa-refresh"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+           <thead>
+              <tr>
+                <th class="text-right"><a href="{{ sort_order_id }}" class="{{ sort == 'o.order_id' ? order|lower : '' }}">{{ column_order_id }}</a></th>
+                <th class="text-left"><a href="{{ sort_date_added }}" class="{{ sort == 'o.date_added' ? order|lower : '' }}">Order Date</a></th>
+                <th class="text-left"><a href="{{ sort_customer }}" class="{{ sort == 'customer' ? order|lower : '' }}">{{ column_customer }}</a></th>
+                
+                <th class="text-left"><a href="{{ sort_phone }}" class="{{ sort == 'o.telephone' ? order|lower : '' }}">{{ column_phone }}</a></th>
+                <th class="text-left"><a href="{{ sort_product }}" class="{{ sort == 'product_name' ? order|lower : '' }}">{{ column_product }}</a></th>
+                <th class="text-left"><a href="{{ sort_sku }}" class="{{ sort == 'p.sku' ? order|lower : '' }}">{{ column_sku }}</a></th>
+                <th class="text-left"><a href="{{ sort_lot_number }}" class="{{ sort == 'inv.inventory_lotnumber' ? order|lower : '' }}">{{ column_lot_number }}</a></th>
+                <th class="text-left"><a href="{{ sort_quantity }}" class="{{ sort == 'op.quantity' ? order|lower : '' }}">{{ column_quantity }}</a></th>
+                
+                <th class="text-left">{{ column_price }}</th> <th class="text-left"><a href="{{ sort_total }}" class="{{ sort == 'op.total' ? order|lower : '' }}">{{ column_total }}</a></th>
+                <th class="text-left"><a href="{{ sort_status }}" class="{{ sort == 'status' ? order|lower : '' }}">{{ column_status }}</a></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if orders %}
+              {% for order in orders %}
+              <tr>
+                <td class="text-right"><a href="{{ order.order_href }}" target="_blank" data-toggle="tooltip" title="View Order Details">#{{ order.order_id }}</a></td>
+                <td class="text-left">{{ order.date_added }}</td>
+                <td class="text-left">
+                    <a href="{{ order.customer_href }}" data-toggle="tooltip" title="View all orders for {{ order.customer }}">{{ order.customer }}</a>
+                </td>
+                <td class="text-left">{{ order.phone }}</td>
+                <td class="text-left">
+                    <a href="{{ order.product_href }}" class="text-info" data-toggle="tooltip" title="View this Product"><strong>{{ order.product }}</strong></a>
+                </td>               
+                <td class="text-left">{{ order.sku }}</td>
+                <td class="text-left">
+                    {% if order.lot_number %}
+                        <a href="{{ order.lot_href }}" class="label label-warning" style="font-size: 11px;">{{ order.lot_number }}</a>
+                    {% else %}
+                        <span class="label label-default">No Lot</span>
+                    {% endif %}
+                </td>                
+                <td class="text-left">{{ order.quantity }}</td>
+                <td class="text-left">{{ order.price }}</td>
+                <td class="text-left">{{ order.total }}</td>
+                <td class="text-left">{{ order.status }}</td>
+              </tr>
+              {% endfor %}
+              {% else %}
+              <tr><td class="text-center" colspan="7">No results found.</td></tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+        <div class="row">
+          <div class="col-sm-6 text-left">{{ pagination }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+
+// Filter Button Logic
+$('#button-filter').on('click', function() {
+    var url = 'index.php?route=extension/module/inventory_module/order_history&user_token={{ user_token }}';
+    
+    $('input[name^=\'filter_\']').each(function() {
+        var value = $(this).val();
+        if (value) {
+            url += '&' + $(this).attr('name') + '=' + encodeURIComponent(value);
+        }
+    });
+    
+    location = url;
+});
+
+// Clear Button Logic
+$('#button-clear').on('click', function() {
+    location = 'index.php?route=extension/module/inventory_module/order_history&user_token={{ user_token }}';
+});
+
+// Datepicker Initialization
+$('.date').datetimepicker({
+    language: '{{ datepicker }}',
+    pickTime: false
+});
+</script>
+
+{{ footer }}

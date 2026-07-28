@@ -1,0 +1,183 @@
+<?php
+$_['extension_name']                    = 'Product Questions &amp; Answers';
+
+// Heading
+$_['heading_title']                     = '<i class="fa fa-question-circle" style="font-size:14px;color:#F7951D;"></i> <strong>' . $_['extension_name'] . '</strong>';
+$_['heading_title_qa']                  = 'Questions &amp; Answers';
+
+// Buttons
+$_['button_apply']                      = 'Apply';
+$_['button_upgrade']                    = 'Upgrade';
+$_['button_purchase_license']           = 'Purchase Additional License';
+$_['button_configure']                  = 'Configure';
+$_['button_install']                    = 'Install';
+
+// Tabs
+$_['tab_settings']                      = 'Settings';
+$_['tab_form']                          = 'Form';
+$_['tab_qa']                            = 'Q &amp A';
+$_['tab_support']                       = 'Support';
+$_['tab_about']                         = 'About';
+$_['tab_general']                       = 'General';
+$_['tab_faq']                           = 'FAQ';
+$_['tab_services']                      = 'Services';
+$_['tab_changelog']                     = 'Changelog';
+$_['tab_extension']                     = 'Extension';
+
+// Text
+$_['text_extension']                    = 'Extensions';
+$_['text_success_upgrade']              = '<strong>Success!</strong> You have upgraded ' . $_['extension_name'] . ' to version <strong>%s</strong>!';
+$_['text_success_update']               = '<strong>Success!</strong> You have updated ' . $_['extension_name'] . ' settings!';
+$_['text_success_hooks_update']         = '<strong>Success!</strong> ' . $_['extension_name'] . ' event hooks updated!';
+$_['text_success_install_dashboard']    = '<strong>Success!</strong> You have installed the Total Questions dashboard!';
+$_['text_success_edit']                 = '<strong>Success!</strong> Question has been updated!';
+$_['text_success_add']                  = '<strong>Success!</strong> Question has been added!';
+$_['text_success_copy']                 = '<strong>Success!</strong> %s question(s) copied!';
+$_['text_success_delete']               = '<strong>Success!</strong> %s question(s) deleted!';
+$_['text_failed_copy']                  = '<strong>Success!</strong> Failed to copy %s question(s)!';
+$_['text_failed_delete']                = '<strong>Success!</strong> Failed to delete %s question(s)!';
+$_['text_confirm_delete']               = 'Confirm Deletion!';
+$_['text_are_you_sure']                 = 'Delete cannot be undone! Are you sure you want to proceed?';
+$_['text_toggle_navigation']            = 'Toggle navigation';
+$_['text_license']                      = 'License';
+$_['text_extension_information']        = 'Extension information';
+$_['text_installed_addons']             = 'Installed add-ons';
+$_['text_legal_notice']                 = 'Legal notice';
+$_['text_terms']                        = 'Terms &amp; Conditions';
+$_['text_support_subject']              = $_['extension_name'] . ' support needed';
+$_['text_license_text']                 = 'Please be aware that this product has a <strong>per-domain license</strong>, meaning you can use it <em>only on a single domain</em> (sub-domains count as separate domains). <strong>You will need to purchase a separate license for each domain you wish to use this extension on.</strong>';
+$_['text_other_extensions']             = 'If you like this extension you might also be interested in <a href="%s" class="alert-link" target="_blank">our other extensions</a>.';
+$_['text_faq']                          = 'Frequently Asked Questions';
+$_['text_first_page']                   = 'First Page';
+$_['text_all']                          = 'All';
+$_['text_store_email_address']          = 'Store e-mail address';
+$_['text_customer_email_address']       = 'Customer e-mail address';
+$_['text_saving']                       = 'Saving ...';
+$_['text_upgrading']                    = 'Upgrading ...';
+$_['text_loading']                      = 'Loading ...';
+$_['text_canceling']                    = 'Canceling ...';
+$_['text_opening']                      = 'Opening ...';
+$_['text_installing']                   = 'Installing ...';
+$_['text_deleting']                     = 'Deleting ...';
+$_['text_copying']                      = 'Copying ...';
+$_['text_search']                       = 'Search';
+$_['text_filter']                       = 'Filter';
+$_['text_clear_filter']                 = 'Clear filter';
+$_['text_clear_search']                 = 'Clear search';
+$_['text_autocomplete']                 = '(Autocomplete)';
+$_['text_no_results']                   = 'There are no questions';
+$_['text_no_records_found']             = 'No records found';
+$_['text_pagination']                   = 'Showing questions {start} to {end} of {total} ({pages} pages)';
+$_['text_filtered_from']                = '[filtered from a total of %s questions]';
+$_['text_anonymous']                    = '<em>Anonymous</em>';
+$_['text_all_languages']                = 'All Languages';
+$_['text_display_language']             = 'Display questions in the selected language';
+$_['text_question']                     = 'Question';
+$_['text_answer']                       = 'Answer';
+$_['text_list']                         = 'Question List';
+$_['text_add']                          = 'Add Question';
+$_['text_edit']                         = 'Edit Question';
+$_['text_edit_short']                   = 'Edit';
+$_['text_menu_qa']                      = 'Q &amp; A';
+$_['text_captcha_qa']                   = 'Product Questions';
+
+// Column
+$_['column_product']                    = 'Product';
+$_['column_question_author_name']       = 'Asked By';
+$_['column_question']                   = 'Question';
+$_['column_answer']                     = 'Answer';
+$_['column_answer_author_name']         = 'Answered By';
+$_['column_date_asked']                 = 'Asked On';
+$_['column_date_answered']              = 'Answered On';
+$_['column_date_modified']              = 'Last Modified';
+$_['column_store']                      = 'Store';
+$_['column_status']                     = 'Status';
+$_['column_action']                     = 'Action';
+
+// Help texts
+$_['help_dashboard_widget']             = 'Show total number of questions with a new dashboard widget.';
+$_['help_new_question_notification']    = 'Send a notification email to the specified email address(es) when a new question is submitted.';
+$_['help_question_reply_notification']  = 'Send a notification email to the question author after the question has been answered in the admin panel.';
+$_['help_notification_emails']          = 'Comma separated list of e-mail addresses where to send notifications about new questions. For multilingual stores you can set a different e-mail address for each language.';
+$_['help_notification_email_from']      = 'The email address from which the notification email is sent from. In case customer e-mail address is selected, but customer does not leave an e-mail address, store e-mail address is used instead.';
+$_['help_display_questions']            = 'If disabled, no questions will be shown on the product page.';
+$_['help_items_per_page']               = 'Enter 0 to display all questions &amp; answers on one page.';
+$_['help_preload']                      = 'Load questions &amp; answers without AJAX call to improve SEO visibility.';
+$_['help_display_all_languages']        = 'If disabled, only questions in the current language are displayed in Store Front.';
+$_['help_remove_sql_changes']           = 'Remove all SQL changes when <strong>uninstalling</strong> the module.';
+$_['help_purchase_additional_licenses'] = 'You need to purchase additional extension licenses to activate the extension on these stores';
+$_['help_notify']                       = 'Send an e-mail notification to the question author. Notification is sent only if the question has been answered.';
+
+// Entry
+$_['entry_installed_version']           = 'Installed version';
+$_['entry_extension_status']            = 'Extension status';
+$_['entry_dashboard_widget']            = 'Dashboard widget';
+$_['entry_new_question_notification']   = 'New question alert';
+$_['entry_notification_emails']         = 'Notification e-mails';
+$_['entry_notification_email_from']     = 'Notification e-mail from';
+$_['entry_question_reply_notification'] = 'Question reply alert';
+$_['entry_display_all_languages']       = 'Show questions in all languages';
+$_['entry_remove_sql_changes']          = 'Remove SQL changes';
+$_['entry_form_display_name']           = 'Display name field';
+$_['entry_form_require_name']           = 'Is name required?';
+$_['entry_form_display_email']          = 'Display email field';
+$_['entry_form_require_email']          = 'Is email required?';
+$_['entry_form_display_phone']          = 'Display phone field';
+$_['entry_form_require_phone']          = 'Is phone number required?';
+$_['entry_form_display_custom']         = 'Display custom field';
+$_['entry_form_require_custom']         = 'Is custom field value required?';
+$_['entry_form_custom_field_name']      = 'Custom field name';
+$_['entry_form_display_captcha']        = 'Display captcha';
+$_['entry_form_require_captcha']        = 'Is captcha required?';
+$_['entry_display_questions']           = 'Display questions &amp; answers';
+$_['entry_new_questions_status']        = 'New question status';
+$_['entry_items_per_page']              = 'Questions per page';
+$_['entry_preload']                     = 'Preload questions';
+$_['entry_display_question_author']     = 'Display question author';
+$_['entry_display_question_date']       = 'Display question date';
+$_['entry_display_answer_author']       = 'Display answer author';
+$_['entry_display_answer_date']         = 'Display answer date';
+$_['entry_extension_name']              = 'Name';
+$_['entry_extension_compatibility']     = 'Compatibility';
+$_['entry_extension_store_url']         = 'Store URL';
+$_['entry_copyright_notice']            = 'Copyright notice';
+$_['entry_active_on']                   = 'Active on';
+$_['entry_inactive_on']                 = 'Inactive on';
+$_['entry_id']                          = 'ID';
+$_['entry_product']                     = 'Product';
+$_['entry_language']                    = 'Language';
+$_['entry_author_name']                 = 'Author name';
+$_['entry_customer']                    = 'Customer';
+$_['entry_email']                       = 'Email';
+$_['entry_phone']                       = 'Phone';
+$_['entry_custom']                      = 'Custom';
+$_['entry_question']                    = 'Question';
+$_['entry_answer']                      = 'Answer';
+$_['entry_status']                      = 'Status';
+$_['entry_date_asked']                  = 'Date asked';
+$_['entry_date_answered']               = 'Date answered';
+$_['entry_date_modified']               = 'Date modified';
+$_['entry_stores']                      = 'Stores';
+$_['entry_update_date_answered']        = 'Update date answered';
+$_['entry_notify']                      = 'Notify question author';
+
+// Error
+$_['error_permission']                  = '<strong>Error!</strong> You do not have permission to modify extension ' . $_['extension_name'] . '!';
+$_['error_warning']                     = '<strong>Warning!</strong> Please check the form carefully for errors!';
+$_['error_ocmod_script']                = '<strong>Error!</strong> The ' . $_['extension_name'] . ' extension OCMOD script is not working. Please check that it exists, is not disabled and the modification cache has been updated. The extension will not work without this script.';
+$_['error_ocmod_cache']                 = '<strong>Warning!</strong> OpenCart modification cache needs updating. Please <a href="%s">refresh</a> the OpenCart modification cache.';
+$_['error_missing_table']               = '<strong>Error!</strong> Your SQL database seems to be missing table \'%s\'!';
+$_['error_missing_column']              = '<strong>Error!</strong> Your SQL table \'%s\' seems to be missing column \'%s\'!';
+$_['error_unsaved_settings']            = '<strong>Warning!</strong> There are unsaved settings! Please save the settings.';
+$_['error_version']                     = '<strong>Info!</strong> ' . $_['extension_name'] . ' version <strong>%s</strong> installation files found. You need to upgrade ' . $_['extension_name'] . '!';
+$_['error_upgrade_database']            = '<strong>Error!</strong> Failed to upgrade database structure!';
+$_['error_ajax_request']                = 'An AJAX error occured!';
+$_['error_items_per_page']              = 'This value must be a positive integer greater than or equal to 0.';
+$_['error_custom_field_name']           = 'Please enter a custom field name!';
+$_['error_missing_email']               = 'You need to provide at least one e-mail address!';
+$_['error_email']                       = 'The field contains invalid e-mail address(es)!';
+$_['error_positive_integer']            = 'This value must be greater than or equal to 0';
+$_['error_dashboard_permission']        = '<strong>Error!</strong> You do not have permission to modify dashboards.';
+$_['error_product']                     = 'Please select a product!';
+$_['error_invalid_email']               = 'Please enter a valid e-mail address!';
+$_['error_question']                    = 'Question text must be at least 1 character long!';

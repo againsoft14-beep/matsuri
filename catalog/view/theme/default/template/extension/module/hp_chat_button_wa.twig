@@ -1,0 +1,95 @@
+{% if whatsapp %}
+
+	<link rel="stylesheet" href="catalog/view/javascript/hpcb.css">
+
+	{% if rtl_status %}
+		<link rel="stylesheet" href="catalog/view/javascript/hpcb-rtl.css">
+	{% endif %}
+
+	<div class="wa__btn_popup">
+		{#<div class="wa__btn_popup_txt"#}
+		{#     {% if hide_prechattext %}style="display:none;"{% endif %}>{{ call_to_action }}</div>#}
+		<div class="wa__btn_popup_icon relative">
+		 	<div class="span"></div>
+ 			 <div class="span"></div>
+		</div>
+	</div>
+	<div class="wa__popup_chat_box wa__pending wa__lauch">
+		<div class="wa__popup_heading">
+			<div class="wa__popup_title">{{ heading_title }}</div>
+			<div class="wa__popup_intro"> {{ description }}
+				<div id="\&quot;eJOY__extension_root\&quot;"></div>
+			</div>
+		</div>
+		<!-- /.wa__popup_heading -->
+		<div class="wa__popup_content wa__popup_content_left">
+			<div class="wa__popup_notice">{{ chat_reply }}</div>
+			{% for wa in whatsapp %}
+				<div class="wa__popup_content_list">
+					<div class="wa__popup_content_item ">
+						{% if is_mobile %}
+						<a target="_blank"
+								{% if wa.link_type == 1 %}
+								{% if mobile_compatibility %}
+									href="https://wa.me/{{ wa.wa_country }}{{ wa.wa_number }}?text={{ text }}" %}
+								{% else %}
+									href="whatsapp://send?phone={{ wa.wa_country }}{{ wa.wa_number }}&text={{ text }}"
+								{% endif %}
+								{% else %}
+									href="{{ wa.custom_link }}"
+								{% endif %}
+                           class="wa__stt wa__stt_online">
+							{% else %}
+
+							<a target="_blank"
+								{% if wa.link_type == 1 %}
+							    href="https://wa.me/{{ wa.wa_country }}{{ wa.wa_number }}?text={{ text }}"
+							    {% else %}
+								href="{{ wa.custom_link }}"
+								{% endif %}
+							   class="wa__stt wa__stt_online">
+								{% endif %}
+								<i class="fa fa-whatsapp wa__button__stt"></i>
+								<div class="wa__popup_avatar">
+									<div class="wa__cs_img_wrap"><img src="{{ wa.picture_wa }}" alt="{{ wa.position }}-img" center center no-repeat
+									                                  style="background-size: cover;"></div>
+								</div>
+
+								<div class="wa__popup_txt">
+									<div class="wa__member_name">{{ wa.name }}</div>
+									<!-- /.wa__member_name -->
+									<div class="wa__member_duty">{{ wa.position }}</div>
+									<!-- /.wa__member_duty -->
+									{% if wa.online_status == 1 %}
+										<div class="wa__member_status_online">
+											<font>{{ text_online }}</font>
+										</div>
+									{% elseif wa.online_status == 2 %}
+										<div class="wa__member_status_away">
+											<font>{{ text_away }}</font>
+										</div>
+									{% else %}
+										<div class="wa__member_status_offline">
+											<font>{{ text_offline }}</font>
+										</div>
+									{% endif %}
+								</div>
+								<!-- /.wa__popup_txt -->
+							</a>
+					</div>
+
+
+				</div>
+			{% endfor %}
+
+			<!-- /.wa__popup_content_list -->
+		</div>
+		<!-- /.wa__popup_content -->
+	</div>
+
+
+	<!-- partial -->
+	<script src="catalog/view/javascript/lc_main.min.js" type="text/javascript">
+	</script>
+
+{% endif %}

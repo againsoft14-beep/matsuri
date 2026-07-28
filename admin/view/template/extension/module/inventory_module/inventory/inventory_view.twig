@@ -1,0 +1,165 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <a href="{{ export_details }}" data-toggle="tooltip" title="Export CSV" class="btn btn-success"><i class="fa fa-file-excel-o"></i> Export</a>
+        <a href="{{ back }}" data-toggle="tooltip" title="Back" class="btn btn-default"><i class="fa fa-reply"></i></a>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+
+    {% if success %}
+    <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }}
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endif %}
+    
+    <div class="panel panel-default">
+     <div class="panel-heading" style="background: #ffffff; border-bottom: 1px solid #edf2f7; padding: 15px 20px;">
+        <div class="row">
+            <div class="col-sm-8">
+                <h3 class="panel-title" style="font-size: 16px; font-weight: 600; color: #2d3748;">
+                    <i class="fa fa-barcode" style="margin-right: 8px; color: #1e91cf;"></i> 
+                    Lot: <span style="color: #1e91cf;">{{ lot_number }}</span> 
+                    <small style="color: #718096; margin-left: 10px;">
+                        <i class="fa fa-calendar-o"></i> {{ date }}
+                    </small>
+                </h3>
+            </div>
+            <div class="col-sm-4 text-right">
+                <span class="label label-{{ status_class }}" style="font-size: 12px; padding: 5px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    {{ status_text }}
+                </span>
+
+                {# Edit Button #}
+                <a href="{{ edit }}" data-toggle="tooltip" title="Edit Inventory" class="btn btn-primary btn-sm" style="margin-left: 10px; border-radius: 4px;">
+                    <i class="fa fa-pencil"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+      <div class="panel-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                <td class="text-left" style="width: 50px;">SL.</td>
+                    <td class="text-left">
+                        Id
+                    </td>
+                  <td class="text-left">
+                    <a href="{{ sort_name }}" class="{% if sort == 'product_name' %}{{ order|lower }}{% endif %}">{{ column_name }}</a>
+                  </td>
+                  <td class="text-right">
+                    <a href="{{ sort_qty }}" class="{% if sort == 'id.quantity' %}{{ order|lower }}{% endif %}">{{ column_quantity }}</a>
+                  </td>
+                  <td class="text-right">{{ column_damage_quantity }}</td>
+                  <td class="text-right">
+                    <a href="{{ sort_current }}" class="{% if sort == 'id.current_quantity' %}{{ order|lower }}{% endif %}">{{ column_current_quantity }}</a>
+                  </td>
+                  <td class="text-left">{{ column_purchase_price }} / {{ column_additional_cost }}</td> 
+                  <td class="text-right">
+                    <a href="{{ sort_sale }}" class="{% if sort == 'id.sale_price' %}{{ order|lower }}{% endif %}">{{ column_sale_price }}</a>
+                  </td>
+                  <td class="text-right">Product Status</td>
+                  <td class="text-right">
+                    <a href="{{ sort_profit }}" class="{% if sort == 'total_profit' %}{{ order|lower }}{% endif %}">{{ column_total_profit }}</a>
+                  </td>
+                  <td class="text-left">{{ column_remarks }}</td>
+                </tr>
+            </thead>
+            <tbody>
+              {% if products %}
+                {% for product in products %}
+                <tr>
+                    <td class="text-left">{{ loop.index }}</td>
+                  <td class="text-left">{{ product.product_id }}</td>
+                  <td class="text-left">
+                      {{ product.name }}
+                      {% if product.categories %}
+                        <br>
+                        {% for category in product.categories %}
+                            <span class="badge" style="background-color: #6c757d; color: #fff; 
+                                font-size: 11px; padding: 2px 6px; border-radius: 4px; margin-right: 2px;">
+                                {{ category }}
+                            </span>
+                        {% endfor %}
+                    {% endif %}
+                  </td>
+                  <td class="text-right">{{ product.quantity }}</td>
+                  <td class="text-right">{{ product.damage_quantity }}</td>
+                  <td class="text-right">{{ product.current_quantity }}</td>
+                  <td class="text-left" style="font-size: 11px; background-color: #fcfcfc;">
+                    <div><span class="text-muted">Purchase:</span> {{ product.purchase_price }}</div>
+                    <div><span class="text-muted">Addl. Cost:</span> {{ product.additional_cost }}</div>
+                    <div style="border-top: 1px dashed #ccc; margin-top: 2px; padding-top: 2px;">
+                        <strong>Total: {{ product.total_cost_price }}</strong>
+                    </div>
+                  </td>
+                  <td class="text-right">{{ product.sale_price }}</td>
+                  <td class="text-left" style="font-size: 11px; line-height: 1.4;">
+                      <ul class="list-unstyled" style="margin:0; padding:0;">
+                          <li><span class="text-warning">Pending:</span> {{ product.total_pending_qty }}</li>
+                          <li><span class="text-info">Accepted:</span> {{ product.total_accepted_qty }}</li>
+                          <li><span class="text-primary">In Process:</span> {{ product.total_in_process_qty }}</li>
+                          <li><span style="color: #8e44ad;">Picked Up:</span> {{ product.total_picked_up_qty }}</li>
+                          <li><span class="text-success"><strong>Sold: {{ product.total_sold_qty }}</strong></span></li>
+                          <li><span class="text-danger">Returned:</span> {{ product.total_returned_qty }}</li>
+                      </ul>
+                  </td>
+                  <td class="text-right">{{ product.total_profit }}</td>
+                  
+                  <td class="text-left">{{ product.remarks }}</td>
+                </tr>
+                {% endfor %}
+              {% else %}
+                <tr>
+                  <td class="text-center" colspan="8">No results!</td>
+                </tr>
+              {% endif %}
+            </tbody>
+            <tfoot>
+              <tr style="font-weight: bold; background-color: #f9f9f9;">
+                <td class="text-left" colspan="3">Total:</td>
+                <td class="text-right">{{ total_qty }}</td>
+                <td class="text-right">{{ total_damage_qty }}</td>
+                <td class="text-right">{{ total_current_qty }}</td>
+                <td class="text-left" style="font-size: 12px; background-color: #f5f5f5;">
+                    <div><span class="text-muted">{{ column_purchase_price }}:</span> {{ total_purchase }}</div>
+                    <div><span class="text-muted">{{ column_additional_cost }}:</span> {{ total_additional }}</div>
+                    <div style="border-top: 1px solid #ccc; margin-top: 2px;">
+                        <strong>{{ column_total_cost }}: {{ total_price }}</strong>
+                    </div>
+                </td>
+                <td class="text-right">{{ total_sale }}</td>
+                <td class="text-left" style="font-size: 11px;">
+                    <ul class="list-unstyled" style="margin:0; padding:0;">
+                      <li><span class="text-warning">Pending:</span> {{ total_pending_qty }}</li>
+                      <li><span class="text-info">Accepted:</span> {{ total_accepted_qty }}</li>
+                      <li><span class="text-primary">In Process:</span> {{ total_in_process_qty }}</li>
+                      <li><span style="color: #8e44ad;">Picked Up:</span> {{ total_picked_up_qty }}</li>
+                      <li><span class="text-success"><strong>Sold: {{ total_sold_qty }}</strong></span></li>
+                      <li><span class="text-danger">Returned:</span> {{ total_returned_qty }}</li>
+                    </ul>
+                </td>
+                <td class="text-right">{{ total_profit }}</td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+
+</div>
+      </div>
+    </div>
+  </div>
+</div>
+{{ footer }}

@@ -1,0 +1,94 @@
+<table class="table">
+  <tr>
+    <td class="col-xs-3">
+      <h5><strong>{{ text_module_settings }}</strong></h5>
+      <span class="help"><i class="fa fa-info-circle"></i>&nbsp;{{ text_module_settings_help }}</span>
+    </td>
+    <td>
+      <div class="col-xs-4">
+        <select name="preorder[Enabled]" class="preorderEnabled form-control" id="preorderStatus">
+          <option value="yes" {{ data.preorder.Enabled == 'yes' ? 'selected' }} > {{ text_enabled }} </option>
+          <option value="no" {{ data.preorder.Enabled != 'yes' ? 'selected' }} > {{ text_disabled }}</option>
+        </select>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td class="col-xs-3">
+      <h5><strong>{{ text_module_status }}</strong></h5>
+      <span class="help"><i class="fa fa-info-circle"></i>{{ text_module_status_help }}</span>
+    </td>
+    <td>
+      <div class="col-xs-6">
+        {% for stock_status in stock_statuses %}
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" name="preorder[{{ stock_status.stock_status_id }}]" value="yes" {{ data.preorder[stock_status.stock_status_id] ? 'checked'}}/> {{ stock_status.name }}
+          </label>
+        </div>
+        {% endfor %}
+      </div>
+    </td>
+  </tr>
+</table>
+
+<h3 style="font-size:16px; font-weight:bold">Order Status</h3>
+
+<div class="row">
+  <div class="col-xs-9">
+
+    <table class="table">
+      <tr>
+        <td class="col-xs-4">
+          <h5><strong>Default Status</strong></h5>
+        </td>
+        <td>
+          <div class="col-xs-6">
+            <select name="preorder[order_status]" class="form-control">
+              {% for order in order_statuses %}
+                <option value="{{ order.order_status_id }}" {{ data.preorder.order_status is not empty and data.preorder.order_status == order.order_status_id ? 'selected=selected' : '' }}>{{ order.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+       </td>
+      </tr>
+      <tr>
+        <td class="col-xs-4">
+          <h5><strong>Complete Status</strong></h5>
+        </td>
+        <td>
+          <div class="col-xs-6">
+            <select name="preorder[order_status_complete]" class="form-control">
+              {% for order in order_statuses %}
+                <option value="{{ order.order_status_id }}" {{ data.preorder.order_status_complete is not empty and data.preorder.order_status_complete == order.order_status_id ? 'selected=selected' : '' }}>{{ order.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+       </td>
+      </tr>
+    </table>
+
+  </div>
+  <div class="col-xs-3">
+    <h4><i class="fa fa-info-circle"></i> Information</h4>
+    <ul class="list">
+      <li>This setting will replace store order status <i>when</i> order contain preorder product(s).</li>
+      <li>Before proceed, create order status for preorder setting at <code>System > Localisation > Order Statuses</code>, example:
+        <ul>
+          <li>Pending PreOrder</li>
+          <li>Complete PreOrder</li>
+        </ul>
+      </li>
+      <li><b>Default Status</b> will replace store processed order status when cart contains preorder product(s).</li>
+      <li><b>Complete Status</b> will replace store complete order status (payment completed) when cart contains preorder product(s).</li>
+      <li><b class="text-danger">Important</b> Make sure to include selected Preorder "Complete Status" in store Complete Order Status at <code>System > Setting > Edit Store > Tab Options > Checkout > Complete Order Status</code> </li>
+    </ul>
+  </div>
+</div>
+
+
+<script>
+$("#preorderStatus").on('change', function(e) {
+  $("#moduleStatus").val($(this).val() == "yes" ? 1 : 0);
+});
+</script>

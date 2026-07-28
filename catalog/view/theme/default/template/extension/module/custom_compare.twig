@@ -1,0 +1,86 @@
+<style>
+    .compare{
+        padding:5px;
+        margin:10px;
+    }
+    .compare h4{
+        text-align: center;
+    }    
+    .compare p{
+        font-size:14px;
+        text-align: center;
+    }
+    .btn-light{
+        width: 100%;
+    }
+    
+</style>
+
+<div class="compare">
+    <h4>Compare Products</h4>
+    <p>Choose Two Products to Compare</p>
+    
+    <form method="post" action="index.php?route=extension/module/custom_compare/custom">
+       
+        <div class="form-group">
+            <input type="text" name="first_product_name" placeholder="Search and Select Product" id="input-name-1" class="form-control" required/>
+            <input type="hidden" name="first_product_id" id="hidden-input-id-1" />
+        </div>
+    
+        <div class="form-group">
+            <input type="text" name="second_product_name" placeholder="Search and Select Product" id="input-name-2" class="form-control" required/>
+            <input type="hidden" name="second_product_id" id="hidden-input-id-2" />
+        </div>
+    <div class="form-group">
+        <button class="btn btn-light">View Comparison</button>
+          </div>       
+    </form>
+</div>
+
+<script type="text/javascript">
+    $('input[name=\'first_product_name\']').autocomplete({
+        'source': function(request, response) {
+            $.ajax({
+                url: 'index.php?route=extension/module/custom_compare/autocomplete&filter_name=' + encodeURIComponent(request.term),
+                dataType: 'json',
+                success: function(json) {
+                    response($.map(json, function(item) {
+                        return {
+                            label: item['name'], // Display product name in suggestions
+                            value: item['name'], // Set product name in input field when selected
+                            product_id: item['product_id'] // You can keep product ID if needed
+                        };
+                    }));
+                }
+            });
+        },
+        'select': function(event, ui) {
+            $('input[name=\'first_product_name\']').val(ui.item.label); // Set the selected product name
+            $('#hidden-input-id-1').val(ui.item.product_id); // Set the product ID in the hidden field
+            return false; // Prevent the default behavior
+        }
+    });
+
+    $('input[name=\'second_product_name\']').autocomplete({
+        'source': function(request, response) {
+            $.ajax({
+                url: 'index.php?route=extension/module/custom_compare/autocomplete&filter_name=' + encodeURIComponent(request.term),
+                dataType: 'json',
+                success: function(json) {
+                    response($.map(json, function(item) {
+                        return {
+                            label: item['name'], // Display product name in suggestions
+                            value: item['name'], // Set product name in input field when selected
+                            product_id: item['product_id'] // You can keep product ID if needed
+                        };
+                    }));
+                }
+            });
+        },
+        'select': function(event, ui) {
+            $('input[name=\'second_product_name\']').val(ui.item.label); // Set the selected product name
+            $('#hidden-input-id-2').val(ui.item.product_id); // Set the product ID in the hidden field
+            return false; // Prevent the default behavior
+        }
+    });
+</script>

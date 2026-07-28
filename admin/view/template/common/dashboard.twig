@@ -1,0 +1,86 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="button" id="button-developer" title="{{ button_developer  }}" data-loading-text="{{ text_loading }}" class="btn btn-info"><i class="fa fa-cog"></i></button>
+      </div>
+      <div class="pull-right" onclick="modiRef()" style="margin-right: 5px;">
+        <a href="{{ modi_refresh }}" data-toggle="tooltip" title="{{ button_modi_refresh }}" class="btn btn-warning">
+        <i class="fa fa-superpowers"></i></a>
+        </div>
+		<div class="pull-right" style="margin-right: 2px;">
+		<button type="button" style="margin-right: 2px;" id="button-refresh" data-toggle="tooltip" title="{{ button_page_refresh }}"
+         onclick="window.location.reload(true)" class="btn btn-success">
+		<i class="fa fa-refresh"></i></button>
+	  </div>
+      <h1>{{ heading_title }}</h1>
+      <div class="pull-right btn" style="margin-right:3px;background-color:#575fcf;">
+		<div style="color:#ffffff;"><i class="fa fa-clock-o"></i> <span id="currentoctime" class="clock" onload="showTime()"></span></div>
+        </div>
+        <script>
+    		function showTime(){var date = new Date();var h = date.getHours();var m = date.getMinutes();var s = date.getSeconds();
+        	h = (h < 10) ? "0" + h : h;m = (m < 10) ? "0" + m : m;s = (s < 10) ? "0" + s : s;var time = h + ":" + m + ":" + s;
+        	document.getElementById("currentoctime").innerText = time;document.getElementById("currentoctime").textContent = time;
+        	setTimeout(showTime, 1000);}showTime();
+		</script>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% if success is defined and success %}
+    <script>
+        setTimeout(function(modiRef){
+        Swal.fire(
+        'Good job!',
+        'All modifications have been refreshed!',
+        'success'
+        )}, 1300);
+    </script>
+    {% endif %}
+  <div class="container-fluid">{% if error_install %}
+    <div class="alert alert-danger alert-dismissible">
+      <button type="button" class="close pull-right" data-dismiss="alert">&times;</button>
+      <i class="fa fa-exclamation-circle"></i> {{ error_install }}</div>
+    {% endif %}
+    {% for row in rows %}
+    <div class="row">{% for dashboard_1 in row %}
+      {% set class = 'col-lg-%s %s'|format(dashboard_1.width, 'col-md-3 col-sm-6') %}
+      {% for dashboard_2 in row %}
+      {% if dashboard_2.width > 3 %}
+      {% set class = 'col-lg-%s %s'|format(dashboard_1.width, 'col-md-12 col-sm-12') %}
+      {% endif %}
+      {% endfor %}
+      <div class="{{ class }}">{{ dashboard_1.output }}</div>
+      {% endfor %}</div>
+    {% endfor %}</div>
+    {{ security }}
+  <script type="text/javascript"><!--
+$('#button-developer').on('click', function() {
+	$.ajax({
+		url: 'index.php?route=common/developer&user_token={{ user_token }}',
+		dataType: 'html',
+		beforeSend: function() {
+			$('#button-developer').button('loading');
+		},
+		complete: function() {
+			$('#button-developer').button('reset');
+		},
+		success: function(html) {
+			$('#modal-developer').remove();
+			
+			$('body').prepend('<div id="modal-developer" class="modal">' + html + '</div>');
+			
+			$('#modal-developer').modal('show');
+		},
+		error: function(xhr, ajaxOptions, thrownError) {
+			alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+		}
+	});	
+});	
+//--></script> 
+</div>
+{{ footer }}

@@ -1,0 +1,165 @@
+{% if preorder['Enabled'] == 'yes' %}
+<style type="text/css">
+.preorder_note {
+    text-align: center;
+    font-size: medium;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    background-color: {{ preorder['BackgroundColor'] }};
+    color: {{ preorder['FontColor'] }};
+    border-color: {{ preorder['BorderColor'] }};
+}
+{% if preorder['CustomCSS'] is defined %}
+{{ preorder['CustomCSS'] }}
+{% endif %}
+</style>
+
+<script>
+$(document).ready( function() {
+});
+</script>
+
+<script>
+$(document).ready( function() {
+    checkQuantityP();
+    $('input[name=quantity], input[name*=option], select[name*=option]').on('change', function() {
+        checkQuantityP();
+    });
+
+    // Fix button cart reset after preorder add
+    $('#button-cart').on('click', function() {
+        setTimeout(function(){
+            checkQuantityP();
+        }, 1000);
+    });
+});
+
+// Journal filters Compatibility
+$(document).ajaxComplete(function( event,request, settings ) {
+    var current_url = settings.url;
+
+    if (current_url.indexOf("journal2_super_filter/products") > 1) {
+        product_id = null;
+        checkQuantityP();
+    }
+
+});
+
+var checkQuantityP = function () {
+    var product_ids=[];
+    var product_id;
+    if ($('[onclick^="cart.add"]').length > 0 ) {
+        for (i = 0; i < $('[onclick^="cart.add"]').length; i++) {
+            onclick_string = $('[onclick^="cart.add"]')[i]['attributes']['onclick']['value'];
+            split_onclick_string = onclick_string.split("'");
+            product_id=split_onclick_string[1];
+            product_ids.push(product_id);
+        }
+        setTimeout(function(){
+            checkPreorderedProducts(product_ids);
+        }, 500);
+    } else if ($('[onclick^="addToCart"]').length > 0 ) {
+        for (i = 0; i < $('[onclick^="addToCart"]').length; i++) {
+            onclick_string = $('[onclick^="addToCart"]')[i]['attributes']['onclick']['value'];
+            split_onclick_string = onclick_string.split("'");
+            product_id=split_onclick_string[1];
+            product_ids.push(product_id);
+        }
+        setTimeout(function(){
+            checkPreorderedProductsJournal(product_ids);
+        }, 500);
+    }
+
+    var query = $('#product input[type=\'text\'], #product input[type=\'hidden\'], #product input[type=\'radio\']:checked, #product input[type=\'checkbox\']:checked, #product select, #product textarea').serialize();
+
+    $.ajax({
+        url: 'index.php?route=extension/module/preorder/checkQuantityPO',
+        type: 'post',
+        data: query,
+        dataType: 'json',
+        beforeSend: function() {
+            $('#product .text-danger').remove();
+        },
+        success: function(json) {
+            setTimeout(function() {
+                if (json['error'].length == 0) {
+                    if (json['status']) {
+                        $('#button-cart').html('{{ preorder_button }}');
+                        $('#button-cart').val('{{ preorder_button }}');
+                        $('#button-cart span').text('{{ preorder_button }}');
+                        $('#button-cart').parents('.outofstock').removeClass('outofstock');
+                        $('#button-cart').addClass('preorder');
+
+                        {% if preorder_date_note %}
+                            if ($('.preorder_note').length > 0) {
+                               $('.preorder_note').remove();
+                            }
+                            var poNotify = '<div class="preorder_note ipo-{{ theme }}">{{ preorder_date_note }}</div>';
+
+                            {% if theme == 'journal3' %}
+                                $('h1.page-title').after(poNotify);
+                            {% elseif theme == 'journal2' %}
+                                $('h1.heading-title').after(poNotify);
+                            {% else %}
+                                $('.breadcrumb').after(poNotify);
+                            {% endif %}
+
+                        {% endif %}
+
+                    } else {
+                        $('#button-cart').html('{{ button_cart }}');
+                        $('#button-cart').val('{{ button_cart }}');
+                        $('#button-cart span').text('{{ button_cart }}');
+                        $('#button-cart').removeClass('preorder');
+
+                        if ($('.preorder_note').length > 0) {
+                            $('.preorder_note').remove();
+                        }
+                    }
+                } else {
+                    $.each(json['error'], function(key, value) {
+                        $('#input-option' + key).after('<div class="text-danger">' + value + '</div>');
+                    });
+                }
+            }, 100);
+        }
+    });
+}
+
+var checkPreorderedProducts = function(product_ids) {
+    $.ajax({
+        url: 'index.php?route=extension/module/preorder/checkQuantityPO',
+        type: 'post',
+        data: {product_id:product_ids},
+        dataType: 'json',
+        success: function(json) {
+            if (json['status'] && json['products']) {
+                for (product_id=0; product_id < json['products'].length; product_id++) {
+                    $('[onclick^="cart.add(\''+json['products'][product_id]+'\'"]').children('span').html('{{ preorder_button }}');
+                    $('[onclick^="cart.add(\''+json['products'][product_id]+'\'"]').parents('.outofstock').removeClass('outofstock');
+                }
+            }
+        }
+    });
+}
+
+var checkPreorderedProductsJournal = function(product_ids) {
+    $.ajax({
+        url: 'index.php?route=extension/module/preorder/checkQuantityPO',
+        type: 'post',
+        data: {product_id:product_ids},
+        dataType: 'json',
+        success: function(json) {
+            if (json['status'] && json['products']) {
+                for (product_id=0; product_id < json['products'].length; product_id++) {
+                    $('[onclick^="addToCart(\''+json['products'][product_id]+'\'"]').children('span').html('{{ preorder_button }}');
+                    $('[onclick^="addToCart(\''+json['products'][product_id]+'\'"]').attr('data-hint','{{ preorder_button }}');
+                    $('[onclick^="addToCart(\''+json['products'][product_id]+'\'"]').parents('.outofstock').removeClass('outofstock');
+                }
+            }
+        }
+    });
+}
+</script>
+{% endif %}

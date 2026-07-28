@@ -1,0 +1,93 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <a href="{{ cancel }}" data-toggle="tooltip" title="Cancel" class="btn btn-default"><i class="fa fa-reply"></i></a>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for b in breadcrumbs %}
+        <li><a href="{{ b.href }}">{{ b.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    {{ messages }}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_form }}</h3>
+      </div>
+      <div class="panel-body">
+        <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-expense" class="form-horizontal">
+          
+          <div class="form-group required">
+            <label class="col-sm-2 control-label" for="input-title">{{ entry_title }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="title" value="{{ title }}" placeholder="{{ entry_title }}" id="input-title" class="form-control" />
+              {% if error_title %}<div class="text-danger">{{ error_title }}</div>{% endif %}
+            </div>
+          </div>
+
+          <div class="form-group required">
+            <label class="col-sm-2 control-label" for="input-category">{{ entry_category }}</label>
+            <div class="col-sm-10">
+              <select name="category_id" id="input-category" class="form-control">
+                <option value="">{{ text_select }}</option>
+                {% for c in categories %}
+                <option value="{{ c.category_id }}" {{ c.category_id == category_id ? 'selected' : '' }}>{{ c.name }}</option>
+                {% endfor %}
+              </select>
+              {% if error_category %}<div class="text-danger">{{ error_category }}</div>{% endif %}
+            </div>
+          </div>
+
+          <div class="form-group required">
+            <label class="col-sm-2 control-label" for="input-amount">{{ entry_amount }}</label>
+            <div class="col-sm-10">
+              <input type="text" name="amount" value="{{ amount }}" placeholder="0.00" id="input-amount" class="form-control" />
+              {% if error_amount %}<div class="text-danger">{{ error_amount }}</div>{% endif %}
+            </div>
+          </div>
+
+          <div class="form-group required">
+            <label class="col-sm-2 control-label" for="input-expense-date">{{ entry_date }}</label>
+            <div class="col-sm-3">
+              <div class="input-group date">
+                <input type="text" name="expense_date" value="{{ expense_date }}" placeholder="YYYY-MM-DD" data-date-format="YYYY-MM-DD" id="input-expense-date" class="form-control" />
+                <span class="input-group-btn">
+                <button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button>
+                </span>
+              </div>
+              {% if error_date %}<div class="text-danger">{{ error_date }}</div>{% endif %}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-note">{{ entry_note }}</label>
+            <div class="col-sm-10">
+              <textarea name="note" rows="5" placeholder="{{ entry_note }}" id="input-note" class="form-control">{{ note }}</textarea>
+            </div>
+          </div>
+
+        </form>
+        
+       <div class="form-group">
+            <div class="col-sm-10 col-sm-offset-2 text-right">
+                <button type="submit" form="form-expense" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i> {{ button_save }}</button>
+            </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+$('.date').datetimepicker({
+    language: '{{ datepicker }}',
+    pickTime: false
+});
+</script>
+{{ footer }}

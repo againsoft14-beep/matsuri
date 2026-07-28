@@ -1,0 +1,162 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+        <div class="container-fluid">
+          <h1>{{ heading_title }}</h1>
+           <ul class="breadcrumb">
+            {% for breadcrumb in breadcrumbs %}
+            <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+  </div>
+  <div class="container-fluid">
+     {% if error_warning %}
+         <div class="alert alert-danger autoSlideUp"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+             <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+    {% endif %}
+    {% if notifywhenavailable.notifywhenavailable.Enabled == 'yes'  %}
+        <div class="alert alert-warning"><i class="fa fa-exclamation-circle"></i>{{ notifywhenavailable_enabled }} </div>
+    {% endif %}
+    {% if success %}
+            <div class="alert alert-success autoSlideUp"><i class="fa fa-check-circle"></i> {{ success }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+            <script>$('.autoSlideUp').delay(3000).fadeOut(600, function(){ $(this).show().css({'visibility':'hidden'}); }).slideUp(600);</script>
+    {% endif %}
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+          <div class="storeSwitcherWidget">
+              <div class="form-group">
+                  <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+                      {{ store.name }} {{ store.store_id == 0 ? "<strong>" ~ text_default ~"</strong>" : "" }}&nbsp;
+                      <span class="caret"></span>
+                      <span class="sr-only">Toggle Dropdown</span></button>
+                  <ul class="dropdown-menu" role="menu">
+                      {% for st in stores %}
+                          <li><a href="index.php?route={{ modulePath }}&store_id={{ st.store_id }}&user_token={{ user_token }}">{{ st.name }}</a></li>
+                      {% endfor %}
+                  </ul>
+              </div>
+
+          </div>
+          <h3 class="panel-title"><i class="fa fa-list"></i>&nbsp;<span style="vertical-align:middle;font-weight:bold;">Module settings</span></h3>
+        </div>
+        <div class="panel-body">
+            <form action=" {{ action }}" method="post" enctype="multipart/form-data" id="form">
+                <input type="hidden" name="module_preorder_status" value="{{ data.preorder.Enabled == 'yes' ? '1' : '0' }}" id="moduleStatus" />
+                <input type="hidden" name="store_id" value="{{ store['store_id'] }}" />
+                <div class="tabbable">
+                    <div class="tab-navigation form-inline">
+                        <ul class="nav nav-tabs mainMenuTabs" id="mainTabs">
+                            <li class="active"><a href="#orders" data-toggle="tab"><i class="fa fa-bell"></i>&nbsp;Pre-Orders</a></li>
+                            <li><a href="#archive" data-toggle="tab"><i class="fa fa-database"></i>&nbsp;Notified Customers</a></li>
+                            <li><a href="#statistics" data-toggle="tab"><i class="fa fa-bar-chart"></i>&nbsp;Statistics</a></li>
+                            <li><a href="#controlpanel" data-toggle="tab"><i class="fa fa-power-off"></i>&nbsp;Control Panel</a></li>
+                            <li><a href="#settings" data-toggle="tab"><i class="fa fa-cog"></i>&nbsp;Settings</a></li>
+                        </ul>
+                        <div class="tab-buttons">
+                            <button type="submit" class="btn btn-success save-changes"><i class="fa fa-check"></i>&nbsp;Save Changes</button>
+                            <a onclick="location = ' {{ cancel }}'" class="btn btn-warning"><i class="fa fa-times"></i>&nbsp;{{ button_cancel }}</a>
+                        </div>
+                    </div><!-- /.tab-navigation -->
+                    <div class="tab-content">
+
+                        <div id="orders" class="tab-pane active">
+                            {{ tab_viewcustomers_content }}
+                        </div>
+                        <div id="controlpanel" class="tab-pane">
+                             {{ tab_controlpanel_content }}
+                        </div>
+                        <div id="settings" class="tab-pane">
+							{{ tab_settings_content }}
+                         </div>
+						<div id="statistics" class="tab-pane">
+                            <div style="overflow:hidden;">
+                            {% if products|length > 0 %}
+                            <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+                                     <script type="text/javascript">
+                                        google.load("visualization", "1", {packages:["corechart"]});
+                                        function drawChart() {
+                                            var data = google.visualization.arrayToDataTable([['Product', 'Pre-Orders', 'Notified', { role: 'annotation' } ],
+                                                {% for pid, notified in products %}
+                                                ['{{ product_names[pid] }}', {{ notified[0]|length }}, {{ notified[1]|length }}, ''],
+                                                {% endfor %}
+                                            ]);
+                                            var options = { title: 'Products Performance', isStacked: true, legend: { position: 'top', maxLines: 3 }, height: 400 };
+                                            var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+                                            chart.draw(data, options);
+                                        }
+                                      </script>
+                                    {% else %}
+                                    <center>There is no data yet for a chart.</center>
+                                {% endif %}
+                                <div id='chart_div'></div>
+
+                                {% if products|length > 0 %}
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover" style="table-layout: fixed;">
+                                        <thead>
+                                            <tr>
+                                                <td style="width:15%">Product</td>
+                                                {% for productInfo in product_options %}
+                                                    <td>{{ productInfo.name }}</td>
+                                                {% endfor %}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><b>Options</b></td>
+                                                {% for productInfo in product_options %}
+                                                    <td>
+                                                    {% for option in productInfo.options %}
+                                                        <small class="preorder-product-option">{{ option.name }}: {{ option.value }}</small><br>
+                                                    {% endfor %}
+                                                    </td>
+                                                {% endfor %}
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div id="archive" class="tab-pane">
+                        {{ tab_archive_content }}
+                        </div>
+                    </div><!-- /.tab-content -->
+                </div><!-- /.tabbable -->
+            </form>
+        </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript" src="view/javascript/summernote/summernote.js"></script>
+<link href="view/javascript/summernote/summernote.css" rel="stylesheet" />
+<script type="text/javascript" src="view/javascript/summernote/opencart.js"></script>
+
+<script>
+if (window.localStorage && window.localStorage['currentTab']) {
+  $('.mainMenuTabs a[href='+window.localStorage['currentTab']+']').trigger('click');
+}
+$('.fadeInOnLoad').css('visibility','visible');
+$('.mainMenuTabs a[data-toggle="tab"]').click(function() {
+  if (window.localStorage) {
+    window.localStorage['currentTab'] = $(this).attr('href');
+  }
+});
+if (typeof drawChart == 'function') {
+    google.setOnLoadCallback(drawChart);
+}
+$('a[href=#statistics]').on('click', function() {
+    if (typeof drawChart == 'function') {
+        setTimeout(function() { drawChart(); }, 250);
+    }
+});
+function enterLicense() {
+    $('a[href=#isense_support]').trigger('click')
+}
+</script>
+{{ footer }}

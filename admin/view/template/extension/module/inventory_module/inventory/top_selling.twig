@@ -1,0 +1,163 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+          <a href="{{ export }}" data-toggle="tooltip" title="Export" class="btn btn-success"><i class="fa fa-file-excel-o"></i></a>
+        </div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-filter"></i> {{ text_filter }}</h3>
+      </div>
+      <div class="panel-body">
+        <div class="well">
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="form-group">
+                <label class="control-label" for="input-range">{{ entry_range }}</label>
+                <select name="filter_range" id="input-range" class="form-control">
+                  <option value="lifetime" {% if filter_range == 'lifetime' or not filter_range %}selected{% endif %}>{{ text_lifetime }}</option>
+                  <option value="today" {% if filter_range == 'today' %}selected{% endif %}>{{ text_today }}</option>
+                  <option value="7_days" {% if filter_range == '7_days' %}selected{% endif %}>{{ text_7_days }}</option>
+                  <option value="15_days" {% if filter_range == '15_days' %}selected{% endif %}>{{ text_15_days }}</option>
+                  <option value="month" {% if filter_range == 'month' %}selected{% endif %}>{{ text_month }}</option>
+                  <option value="3_months" {% if filter_range == '3_months' %}selected{% endif %}>{{ text_3_months }}</option>
+                  <option value="year" {% if filter_range == 'year' %}selected{% endif %}>{{ text_year }}</option>
+                  <option value="custom" {% if filter_range == 'custom' %}selected{% endif %}>{{ text_custom }}</option>
+                </select>
+              </div>
+            </div>
+            
+            <div id="custom-date-fields" style="display: {% if filter_range == 'custom' %}block{% else %}none{% endif %};">
+                <div class="col-sm-3">
+                  <div class="form-group">
+                    <label class="control-label">{{ entry_date_start }}</label>
+                    <div class="input-group date">
+                      <input type="text" name="filter_date_start" value="{{ filter_date_start }}" data-date-format="YYYY-MM-DD" class="form-control" />
+                      <span class="input-group-btn"><button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-3">
+                  <div class="form-group">
+                    <label class="control-label">{{ entry_date_end }}</label>
+                    <div class="input-group date">
+                      <input type="text" name="filter_date_end" value="{{ filter_date_end }}" data-date-format="YYYY-MM-DD" class="form-control" />
+                      <span class="input-group-btn"><button class="btn btn-default" type="button"><i class="fa fa-calendar"></i></button></span>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            
+            <div class="col-sm-3">
+            <div class="form-group" style="margin-top: 23px;">
+              <button type="button" id="button-filter" class="btn btn-primary" data-toggle="tooltip" title="{{ button_filter }}"><i class="fa fa-filter"></i> {{ button_filter }}</button>
+              <a href="index.php?route=extension/module/inventory_module/top_selling&user_token={{ user_token }}" class="btn btn-default" data-toggle="tooltip" title="{{ button_clear }}"><i class="fa fa-refresh"></i></a>
+            </div>
+          </div>
+          </div>
+        </div>
+        
+        
+
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead>
+              <tr class="active">
+                <td class="text-center" width="70">{{ column_rank }}</td>
+                <td class="text-center" width="100">{{ column_image }}</td>
+                <td class="text-left">
+                    <a href="{{ sort_name }}" class="{% if sort == 'pd.name' %}{{ order|lower }}{% endif %}">{{ column_name }}</a>
+                </td>
+                <td class="text-left">
+                    <a href="{{ sort_sku }}" class="{% if sort == 'p.sku' %}{{ order|lower }}{% endif %}">{{ column_sku }}</a>
+                </td>
+                <td class="text-right">
+                    <a href="{{ sort_price }}" class="{% if sort == 'p.price' %}{{ order|lower }}{% endif %}">{{ column_price }}</a>
+                </td>
+                <td class="text-center" width="180">
+                    <a href="{{ sort_sold }}" class="{% if sort == 'total_sold' %}{{ order|lower }}{% endif %}">{{ column_sold }}</a>
+                </td>
+            </tr>
+            </thead>
+            <tbody>
+              {% if products %}
+              {% for product in products %}
+              <tr>
+               <td class="text-center">
+                {% if product.rank == 1 %}
+                    <span class="label label-warning" style="background-color: #FFD700;"><i class="fa fa-trophy"></i> 1</span>
+                {% elseif product.rank == 2 %}
+                    <span class="label label-default" style="background-color: #C0C0C0;">2</span>
+                {% elseif product.rank == 3 %}
+                    <span class="label label-danger" style="background-color: #CD7F32;">3</span>
+                {% else %}
+                    {{ product.rank }}
+                {% endif %}
+            </td>
+                <td class="text-center"><img src="{{ product.image }}" class="img-thumbnail" alt="{{ product.name }}" /></td>
+                <td class="text-left" style="vertical-align: middle;"><strong>{{ product.name }}</strong></td>
+                <td class="text-left" style="vertical-align: middle;">{{ product.sku }}</td>
+                <td class="text-right" style="vertical-align: middle;">{{ product.price }}</td>
+                <td class="text-center" style="vertical-align: middle;">
+                    <div class="well well-sm" style="margin-bottom: 0; padding: 5px; background: #f9f9f9;">
+                        <span class="text-primary" style="font-weight: bold; font-size: 16px;">{{ product.total_sold }}</span> <small class="text-muted">Units</small>
+                    </div>
+                </td>
+              </tr>
+              {% endfor %}
+              {% else %}
+              <tr>
+                <td class="text-center" colspan="6">{{ text_no_results }}</td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+$('#button-filter').on('click', function() {
+    var url = 'index.php?route=extension/module/inventory_module/top_selling&user_token={{ user_token }}';
+    var filter_range = $('select[name=\'filter_range\']').val();
+    url += '&filter_range=' + encodeURIComponent(filter_range);
+    
+    if (filter_range == 'custom') {
+        var filter_date_start = $('input[name=\'filter_date_start\']').val();
+        if (filter_date_start) url += '&filter_date_start=' + encodeURIComponent(filter_date_start);
+        
+        var filter_date_end = $('input[name=\'filter_date_end\']').val();
+        if (filter_date_end) url += '&filter_date_end=' + encodeURIComponent(filter_date_end);
+    }
+    location = url;
+});
+
+$('#input-range').on('change', function() {
+    if ($(this).val() == 'custom') {
+        $('#custom-date-fields').fadeIn();
+    } else {
+        $('#custom-date-fields').fadeOut();
+        $('#button-filter').trigger('click'); 
+    }
+});
+
+$('.date').datetimepicker({
+    pickTime: false
+});
+
+
+</script>
+{{ footer }}
